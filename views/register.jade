@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title 프로그라피드백 
+    link(rel='stylesheet', href='stylesheets/style.css')
+  body
+    .login
+      .login-triangle
+      h2.login-header REGISTER
+      div.login-container
+        form(action='/register', method='post')
+          p
+            input(type='text', name='name', placeholder='이름')
+          p
+            input(type='text', name='nickname', placeholder='닉네임')
+          p
+            input(type='password', name='pwd', placeholder='비밀번호')
+          p
+            input(type='password', name='pwdchk', placeholder='비밀번호확인')
+          p
+            input(type='submit', value='회원가입')
+    script(src='javascripts/jquery.min.js')
+    script.
+      $(function() {
+      var err = "!{err}";
+      if(err) {alert("!{errmsg}");}
+      });   
+

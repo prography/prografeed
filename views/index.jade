@@ -2,21 +2,27 @@ doctype html
 html
   head
     meta(charset='UTF-8')
-    title 프로그라피드백
+    title 프로그라피드백 
     link(rel='stylesheet', href='stylesheets/style.css')
   body
     .login
       .login-triangle
       h2.login-header Log in
-      form.login-container
-        p
-          input(type='email', placeholder='Email')
-        p
-          input(type='password', placeholder='Password')
-        p
-          input(type='submit', value='Log in', onclick='login()')
+      div.login-container
+        form(action='/', method='post')
+          p
+            input(type='text', name='nickname', placeholder='닉네임')
+          p
+            input(type='password', name='pwd', placeholder='비밀번호')
+          p
+            input(type='submit', value='로그인')
+        form(action='/register', method='get')
+          p
+            input(type='submit', value='회원가입')
+    script(src='javascripts/jquery.min.js')
     script.
-      function login() {
-      location.href = '/chat';
-      }
+      $(function(){
+      var err = !{err};
+      if(err) alert("!{errmsg}");
+      });
 

@@ -2,22 +2,28 @@ doctype html
 html
   head
     meta(charset='euc-kr')
-    title 프로그라피 피드백
+    title 프로그라피드백
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
   body
     .container
-      h3 프로그라피 피드백
-      form.form-inline
-        .form-group
-          label(for='msgForm') Message: 
-          input#msgForm.form-control(type='text')
-        button.btn.btn-primary(type='submit') Send
+      h3 PrograFeedback
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/test.pptx', width='70%', height='600px', frameborder='0')
       #messages
+      #footer
+        form.form-inline
+          .form-group
+            label(for='msgForm') Message: 
+            input#msgForm.form-control(type='text')
+          button.btn.btn-primary(type='submit') Send
       style.
-        #messages { list-style-type: none; margin: 0; padding: 0; }
+        .container { margin: auto; }
+        h3 { width: 70vw; height: 5vh; margin-top: 40px;}
+        #footer { position: absolute; bottom: 10px; width: 70vw; height: 10vh; }
+        iframe { float: left; }
+        #messages { list-style-type: none; margin: 0; padding: 0; width: 20%; height: 70vh; overflow: auto; float: left;}
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
-
+        .form-control { margin: 10px; width: 50wh; }
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.
@@ -26,8 +32,7 @@ html
       var socket = io("http://13.125.37.214:3000");
       // 서버로 자신의 정보를 전송한다.
       socket.emit("login", {
-      name: "강재윤",
-      userid: "ungmo2@gmail.com"
+      name: "!{nickname}",
       });
       // 서버로부터의 메시지가 수신되면
       socket.on("login", function(data) {
@@ -36,6 +41,7 @@ html
       // 서버로부터의 메시지가 수신되면
       socket.on("s2c chat", function(data) {
       $("#messages").append("<div><strong>" + data.from.name + " : </strong>" + data.msg + "</div>");
+      $("#messages").scrollTop($("#messages")[0].scrollHeight);
       });
       // Send 버튼이 클릭되면
       $("form").submit(function(e) {
