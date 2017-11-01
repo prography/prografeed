@@ -11,14 +11,16 @@ let userSchema = new Schema({
     unique: true
   },
   password: String,
-  created_at: {type: Date, default: Date.now}
+  created_at: {type: Date, default: Date.now},
+  isAdmin: {type: Boolean, default: false}
 })
 
 class User {
   getUserInfo () {
     return {
-      name: this.nickname,
-      created_at: this.created_at
+      username: this.username,
+      nickname: this.nickname,
+      isAdmin: this.isAdmin
     }
   }
 
@@ -46,10 +48,10 @@ class User {
     })
   }
 
-  static confirmLogin (name, password) {
+  static confirmLogin (nickname, password) {
     return new Promise((resolve, reject) => {
       this.find({
-        name
+        nickname
       }).exec((err, person) => {
         if (err) {
           reject(new Error({
@@ -61,10 +63,8 @@ class User {
             code: '00' // 이름 없음
           }))
         } else {
-          if (person.password.equals(password)) {
-            resolve({
-              code: '10' // 로그인 성공
-            })
+          if (person[0].password === password) {
+            resolve(person[0])
           } else {
             reject(new Error({
               code: '01' // 비밀번호 틀림
