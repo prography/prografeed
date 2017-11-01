@@ -15,6 +15,7 @@ html
             label(for='msgForm') Message: 
             input#msgForm.form-control(type='text')
           button.btn.btn-primary(type='submit') Send
+
       style.
         .container { margin: auto; }
         h3 { width: 70vw; height: 5vh; margin-top: 40px;}
@@ -24,32 +25,45 @@ html
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
         .form-control { margin: 10px; width: 50wh; }
-    script(src='javascripts/socket.io.js')
-    script(src='javascripts/jquery.min.js')
+    script(src='/javascripts/socket.io.js')
+    script(src='/javascripts/jquery.min.js')
     script.
       $(function(){
-        $.each(!{conversations}, function(key, val) {
-          var conversation = JSON.parse(JSON.stringify(val))
-          $.each(conversation, function(key, val) {
-            $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
-            $("#messages").scrollTop($("#messages")[0].scrollHeight);
-          });
-        });
+        //$.each(!{conversations}, function(key, val) {
+        //  var conversation = JSON.parse(JSON.stringify(val))
+        //  $.each(conversation, function(key, val) {
+        //    $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
+        //    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        //  });
+        //});
       
         // socket.io 서버에 접속한다
-        var socket = io("http://13.125.37.214:3000");
+        var socket = io();
         // 서버로 자신의 정보를 전송한다.
         socket.emit("login", {
           name: "!{nickname}",
-          room: "!{pptname}"
+          room: "!{roomId}"
         });
         // 서버로부터의 메시지가 수신되면
-        socket.on("login", function(data) {
+        socket.on("login", function (data) {
           $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
         });
+
+        // 기존 채팅 데이터를 수신한다
+        socket.emit("receive_prev_chat_data");
+        socket.on("receive_prev_chat_data_continue", function (received) {
+          received.forEach(function(data) {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+          })
+          $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        });
+        socket.on("receive_prev_chat_data_complete", function (data) {
+         console.log('receive_prev_chat_data_complete')
+        });
+
         // 서버로부터의 메시지가 수신되면
         socket.on("s2c chat", function(data) {
-          $("#messages").append("<div><strong>" + data.from.name + " : </strong>" + data.msg + "</div>");
+          $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
           $("#messages").scrollTop($("#messages")[0].scrollHeight);
         });
         // Send 버튼이 클릭되면
