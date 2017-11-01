@@ -4,10 +4,11 @@ const favicon = require('static-favicon')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const cookieSession = require('cookie-session')
 
 const routes = require('./routes/index')
 const users = require('./routes/users')
-const chat = require('./routes/chat')
+const room = require('./routes/room')
 const register = require('./routes/register')
 
 const app = express()
@@ -28,16 +29,25 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '../public')))
+const session = cookieSession({
+  name: 'session',
+  keys: ['hello', 'world'],
+  httpOnly: true,
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours,
+  autoSave: true
+})
+app.use(session)
+
 app.set('ipaddr', '172.31.9.130')
 app.set('port', 3000)
 
 app.use('/', routes)
 app.use('/users', users)
-app.use('/chat', chat)
+app.use('/room', room)
 app.use('/register', register)
 
 /// catch 404 and forwarding to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   let err = new Error('Not Found')
   err.status = 404
   next(err)
@@ -48,7 +58,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function (err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500)
     res.render('error', {
       message: err.message,
@@ -71,34 +81,19 @@ server.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'))
 })
 
+const combineEvents = require('./events/combineEvents')
+
 io.on('connection', function (socket) {
-  // 접속한 클라이언트의 정보가 수신되면
-  socket.on('login', function (data) {
-    console.log('Client logged-in:\n name:' + data.name)
+  let cookieString = socket.request.headers.cookie
 
-    // socket에 클라이언트 정보를 저장한다
-    socket.name = data.name
-    socket.room = data.room
-
-    socket.join(socket.room)
-    // 접속된 모든 클라이언트에게 메시지를 전송한다
-    io.to(socket.room).emit('login', data.name)
+  let req = {connection: {encrypted: false}, headers: {cookie: cookieString}}
+  let res = {getHeader: () => {}, setHeader: () => {}}
+  //
+  session(req, res, () => {
+    socket.userData = req.session.user
   })
 
-  // 클라이언트로부터의 메시지가 수신되면
-  socket.on('chat', function (data) {
-    console.log('Message from %s: %s', socket.name, data.msg)
-
-    const msg = {
-      from: {
-        name: socket.name
-      },
-      msg: data.msg
-    }
-
-    io.to(socket.room).emit('s2c chat', msg)
-  })
-
+  combineEvents(io, socket)
   // force client disconnect from server
   socket.on('forceDisconnect', function () {
     socket.disconnect()
@@ -108,6 +103,7 @@ io.on('connection', function (socket) {
     console.log('user disconnected: ' + socket.name)
   })
 })
+app.set('io', io)
 
 const db = mongoose.connection
 
@@ -123,5 +119,5 @@ const config = require('../config.json')
 mongoose.connect(config.dev.mongo, {
   useMongoClient: true
 })
-
+mongoose.Promise = global.Promise
 module.exports = app
