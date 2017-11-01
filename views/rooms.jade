@@ -1,0 +1,53 @@
+doctype html
+html
+  head
+    meta(charset='euc-kr')
+    title 프로그라피드백
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+  body
+    .container
+      h3 PrograFeedback
+      #rooms
+        .row
+          .number no
+          .pptname ppt
+          .owner owner  
+          .created created   
+        each room, i in rooms
+          .row(onclick='chat(this)')    
+            .number= i
+            .pptname= room.ppt
+            .owner= room.owner
+            .created= room.created_at
+      style.
+        .container { margin: auto; }
+        h3 { width: 70vw; height: 5vh; margin-top: 40px;}
+        .row { width: 100%; height: 50px; }
+        .number { width: 10%; height: 100%; float: left;}
+        .pptname { width: 50%; height: 100%; float: left;}
+        .owner { width: 10%; height: 100%; float: left;}
+        .created { width: 30%; height: 100%; float: left;}
+    script(src='javascripts/socket.io.js')
+    script(src='javascripts/jquery.min.js')
+    script.
+      function chat(elem) {
+        var f = document.createElement('form');
+        f.action = '/chat';
+        f.method = 'POST';
+        
+        var pptInput = document.createElement('input');
+        pptInput.type = 'hidden';
+        pptInput.name = 'pptname';
+        pptInput.value = $(elem).find(".pptname").text();
+        f.appendChild(pptInput);
+
+        var nickInput = document.createElement('input');
+        nickInput.type = 'hidden';
+        nickInput.name = 'nickname';
+        nickInput.value = "!{nickname}";
+        f.appendChild(nickInput);
+
+        document.body.appendChild(f);
+        f.submit();
+       
+      }

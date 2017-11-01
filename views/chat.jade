@@ -7,7 +7,7 @@ html
   body
     .container
       h3 PrograFeedback
-      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/test.pptx', width='70%', height='600px', frameborder='0')
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='70%', height='600px', frameborder='0')
       #messages
       #footer
         form.form-inline
@@ -28,28 +28,37 @@ html
     script(src='javascripts/jquery.min.js')
     script.
       $(function(){
-      // socket.io 서버에 접속한다
-      var socket = io("http://13.125.37.214:3000");
-      // 서버로 자신의 정보를 전송한다.
-      socket.emit("login", {
-      name: "!{nickname}",
-      });
-      // 서버로부터의 메시지가 수신되면
-      socket.on("login", function(data) {
-      $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
-      });
-      // 서버로부터의 메시지가 수신되면
-      socket.on("s2c chat", function(data) {
-      $("#messages").append("<div><strong>" + data.from.name + " : </strong>" + data.msg + "</div>");
-      $("#messages").scrollTop($("#messages")[0].scrollHeight);
-      });
-      // Send 버튼이 클릭되면
-      $("form").submit(function(e) {
-      e.preventDefault();
-      var $msgForm = $("#msgForm");
-      // 서버로 메시지를 전송한다.
-      socket.emit("chat", { msg: $msgForm.val() });
-      $msgForm.val("");
-      });
+        $.each(!{conversations}, function(key, val) {
+          var conversation = JSON.parse(JSON.stringify(val))
+          $.each(conversation, function(key, val) {
+            $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
+            $("#messages").scrollTop($("#messages")[0].scrollHeight);
+          });
+        });
+      
+        // socket.io 서버에 접속한다
+        var socket = io("http://13.125.37.214:3000");
+        // 서버로 자신의 정보를 전송한다.
+        socket.emit("login", {
+          name: "!{nickname}",
+          room: "!{pptname}"
+        });
+        // 서버로부터의 메시지가 수신되면
+        socket.on("login", function(data) {
+          $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
+        });
+        // 서버로부터의 메시지가 수신되면
+        socket.on("s2c chat", function(data) {
+          $("#messages").append("<div><strong>" + data.from.name + " : </strong>" + data.msg + "</div>");
+          $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        });
+        // Send 버튼이 클릭되면
+        $("form").submit(function(e) {
+          e.preventDefault();
+          var $msgForm = $("#msgForm");
+        // 서버로 메시지를 전송한다.
+        socket.emit("chat", { msg: $msgForm.val() });
+          $msgForm.val("");
+        });
       });
 
