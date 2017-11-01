@@ -48,4 +48,16 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+// temp create room
+router.get('/new/:ppt', async (req, res, next) => {
+  const ppt = req.params.ppt
+  new Room({
+    ppt,
+    owner: req.session.user._id
+  }).save((err, result) => {
+    if (err) console.log(err)
+    res.send('good')
+  })
+})
+
 module.exports = router
