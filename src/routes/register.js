@@ -7,18 +7,14 @@ router.get('/', function (req, res) {
 })
 
 router.post('/', async function (req, res) {
-  let name = req.body.name
-  let nickname = req.body.nickname
-  let pwd = req.body.pwd
-  let pwdchk = req.body.pwdchk
-
+  const {name, nickname, pwd, pwdchk} = req.body
   if (pwd !== pwdchk) {
     res.render('register', {err: true, errmsg: '비밀번호를 확인해주세요!'})
   } else if (!name || !nickname || !pwd || !pwdchk) {
     res.render('register', {err: true, errmsg: '내용을 모두 입력해주세요!'})
   } else {
     try {
-      await User.add(name, nickname, pwd)
+      req.session.user = await User.add(name, nickname, pwd)
       res.redirect('/')
     } catch (err) {
       let errmsg = ''
