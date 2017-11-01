@@ -6,9 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var chat = require('./routes/chat');
-var register = require('./routes/register');
 
 var app = express();
 
@@ -33,9 +30,6 @@ app.set("port", 3000);
 
 
 app.use('/', routes);
-app.use('/users', users);
-app.use('/chat', chat);
-app.use('/register', register);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
@@ -76,14 +70,15 @@ io.on('connection', function(socket) {
 
   // 접속한 클라이언트의 정보가 수신되면
   socket.on('login', function(data) {
-    console.log('Client logged-in:\n name:' + data.name + '\n userid: ' + data.userid);
+    console.log('Client logged-in:\n name:' + data.name);
 
     // socket에 클라이언트 정보를 저장한다
     socket.name = data.name;
-    socket.userid = data.userid;
+	socket.room = data.room;
 
+	socket.join(socket.room);
     // 접속된 모든 클라이언트에게 메시지를 전송한다
-    io.emit('login', data.name );
+    io.to(socket.room).emit('login', data.name );
   });
 
   // 클라이언트로부터의 메시지가 수신되면
@@ -93,12 +88,11 @@ io.on('connection', function(socket) {
     var msg = {
       from: {
         name: socket.name,
-        userid: socket.userid
       },
       msg: data.msg
     };
 
-    io.emit('s2c chat', msg);
+    io.to(socket.room).emit('s2c chat', msg);
   });
 
   // force client disconnect from server
