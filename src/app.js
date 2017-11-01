@@ -1,22 +1,22 @@
-var express = require('express')
-var path = require('path')
-var favicon = require('static-favicon')
-var logger = require('morgan')
-var cookieParser = require('cookie-parser')
-var bodyParser = require('body-parser')
+const express = require('express')
+const path = require('path')
+const favicon = require('static-favicon')
+const logger = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 
-var routes = require('./routes/index')
-var users = require('./routes/users')
-var chat = require('./routes/chat')
-var register = require('./routes/register')
+const routes = require('./routes/index')
+const users = require('./routes/users')
+const chat = require('./routes/chat')
+const register = require('./routes/register')
 
-var app = express()
+const app = express()
 
-var server = require('http').Server(app)
+const server = require('http').Server(app)
 // http server를 socket.io server로 upgrade한다
-var io = require('socket.io')(server)
+const io = require('socket.io')(server)
 
-let mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
 // view engine setup
 app.set('views', path.join(__dirname, '../views'))
@@ -38,7 +38,7 @@ app.use('/register', register)
 
 /// catch 404 and forwarding to error handler
 app.use(function (req, res, next) {
-  var err = new Error('Not Found')
+  let err = new Error('Not Found')
   err.status = 404
   next(err)
 })
@@ -89,7 +89,7 @@ io.on('connection', function (socket) {
   socket.on('chat', function (data) {
     console.log('Message from %s: %s', socket.name, data.msg)
 
-    var msg = {
+    const msg = {
       from: {
         name: socket.name
       },
@@ -109,7 +109,7 @@ io.on('connection', function (socket) {
   })
 })
 
-var db = mongoose.connection
+const db = mongoose.connection
 
 db.on('error', error => {
   console.log(error)
@@ -119,6 +119,9 @@ db.once('open', function () {
   console.log('Connected to mongod server')
 })
 
-mongoose.connect('mongodb://localhost/mongodb_tutorial')
+const config = require('../config.json')
+mongoose.connect(config.dev.mongo, {
+  useMongoClient: true
+})
 
 module.exports = app
