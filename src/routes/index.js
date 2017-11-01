@@ -1,19 +1,36 @@
 let express = require('express')
 let router = express.Router()
 let User = require('../models/user')
+const Room = require('../models/room')
 
-/* GET home page. */
-router.get('/', function (req, res) {
-  res.render('index')
+router.get('/', async (req, res) => {
+  if (req.session.user) {
+    Room
+      .find()
+      .populate('owner', 'nickname')
+      .sort({'created_at': 1})
+      .exec((err, rooms) => {
+        if (err) console.log(err)
+        res.render('rooms', {rooms, nickname: req.session.user.nickname})
+      })
+  } else {
+    res.render('index')
+  }
 })
 
 router.post('/', async (req, res, next) => {
-  let nickname = req.body.nickname
-  let pwd = req.body.pwd
-
+  const {nickname, pwd} = req.body
   try {
-    await User.confirmLogin(nickname, pwd)
-    res.render('chat', {'nickname': nickname, 'pwd': pwd})
+    req.session.user = await User.confirmLogin(nickname, pwd)
+    Room
+      .find()
+      .populate('owner', 'nickname')
+      .select('owner ppt created_at')
+      .sort({'created_at': 1})
+      .exec((err, rooms) => {
+        if (err) console.log(err)
+        res.render('rooms', {rooms, nickname: req.session.user.nickname})
+      })
   } catch (err) {
     switch (err.code) {
       case '00':
@@ -22,68 +39,13 @@ router.post('/', async (req, res, next) => {
       case '01':
         res.render('index', {err: 'true', errmsg: '비밀번호가 일치하지 않습니다!'})
         break
+      default:
+        res.render('error', {
+          message: err.message,
+          error: err
+        })
     }
   }
-})
-
-router.post('/rooms', function (req, res, next) {
-  var nickname = req.body.nickname
-  var pwd = req.body.pwd
-
-  var MongoClient = require('mongodb').MongoClient
-  var url = 'mongodb://localhost:27017/prography'
-
-  MongoClient.connect(url, function (err, db) {
-    if (err) throw err
-    var collection = db.collection('users')
-    var query = {nickname: nickname}
-    collection.find(query).toArray(function (err, result) {
-      if (err) throw err
-      if (result.length === 0) {
-        db.close()
-        res.render('index', {err: 'true', errmsg: '닉네임이 존재하지 않습니다!'})
-      } else {
-        var query = {nickname: nickname, pwd: pwd}
-        collection.find(query).toArray(function (err, result) {
-          if (err) throw err
-          if (result.length === 0) {
-            db.close()
-            res.render('index', {err: 'true', errmsg: '비밀번호가 일치하지 않습니다!'})
-          } else {
-            var collection = db.collection('rooms')
-            collection.find().sort({'created_at': 1}).toArray(function (err, result) {
-              if (err) throw err
-              db.close()
-              res.render('rooms', {rooms: result, nickname: nickname})
-            })
-          }
-        })
-      }
-    })
-  })
-})
-
-router.post('/chat', function (req, res) {
-  var pptname = req.body.pptname
-  var nickname = req.body.nickname
-
-  var MongoClient = require('mongodb').MongoClient
-  var url = 'mongodb://localhost:27017/prography'
-
-  MongoClient.connect(url, function (err, db) {
-    if (err) throw err
-    var collection = db.collection('rooms')
-    var query = {ppt: pptname}
-    collection.find(query).toArray(function (err, result) {
-      if (err) throw err
-      db.close()
-      res.render('chat', {
-        pptname: pptname,
-        nickname: nickname,
-        conversations: JSON.stringify(result[0]['conversations'])
-      })
-    })
-  })
 })
 
 module.exports = router
