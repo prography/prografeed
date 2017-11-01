@@ -14,10 +14,10 @@ html
           .owner owner  
           .created created   
         each room, i in rooms
-          .row(onclick='chat(this)')    
+          .row(onclick='chat(this, "#{room._id}")')
             .number= i
             .pptname= room.ppt
-            .owner= room.owner
+            .owner= room.owner.nickname
             .created= room.created_at
       style.
         .container { margin: auto; }
@@ -30,24 +30,11 @@ html
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.
-      function chat(elem) {
+      function chat(elem, roomId) {
         var f = document.createElement('form');
-        f.action = '/chat';
-        f.method = 'POST';
-        
-        var pptInput = document.createElement('input');
-        pptInput.type = 'hidden';
-        pptInput.name = 'pptname';
-        pptInput.value = $(elem).find(".pptname").text();
-        f.appendChild(pptInput);
-
-        var nickInput = document.createElement('input');
-        nickInput.type = 'hidden';
-        nickInput.name = 'nickname';
-        nickInput.value = "!{nickname}";
-        f.appendChild(nickInput);
+        f.action = `/room/${roomId}`;
+        f.method = 'GET';
 
         document.body.appendChild(f);
         f.submit();
-       
       }
