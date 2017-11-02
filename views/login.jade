@@ -1,0 +1,37 @@
+doctype html
+html
+    head
+        meta(charset='UTF-8')
+        title 프로그라피드백
+        link(rel='stylesheet', href='stylesheets/login-page.css')
+        link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+    body
+        form.login-form(action='/' method='post')
+            img.logo(src='/logo.png')
+            .form-group
+                input.form-control#UserName(type='text' placeholder="닉네임 " name='nickname')
+                i.fa.fa-user
+            .form-group.log-status
+                input.form-control#Passwod(type="password" placeholder="비밀번호" name='pwd')
+                i.fa.fa-lock
+            if errmsg
+                span.alert=errmsg
+            a.link(href="/register") 회원가입
+            button.log-btn(type="submit") 로그인
+        script(src='javascripts/jquery.min.js')
+        script.
+          //$(function () {
+          //  var err = !{err};
+          //  if (err) alert("!{errmsg}");
+          //});
+//          $(document).ready(function () {
+//            $('.log-btn').click(function () {
+//              $('.log-status').addClass('wrong-entry');
+//              $('.alert').fadeIn(500);
+//              setTimeout("$('.alert').fadeOut(1500);", 3000);
+//            });
+//            $('.form-control').keypress(function () {
+//              $('.log-status').removeClass('wrong-entry');
+//            });
+//
+//          });

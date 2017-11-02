@@ -3,7 +3,7 @@ html
   head
     meta(charset='UTF-8')
     title 프로그라피드백 
-    link(rel='stylesheet', href='stylesheets/style.css')
+    link(rel='stylesheet', href='stylesheets/login-page.css')
   body
     .login
       .login-triangle
@@ -24,5 +24,16 @@ html
       $(function(){
       var err = !{err};
       if(err) alert("!{errmsg}");
+      });
+      $(document).ready(function () {
+        $('.log-btn').click(function () {
+          $('.log-status').addClass('wrong-entry');
+          $('.alert').fadeIn(500);
+          setTimeout("$('.alert').fadeOut(1500);", 3000);
+        });
+        $('.form-control').keypress(function () {
+          $('.log-status').removeClass('wrong-entry');
+        });
+
       });
 
