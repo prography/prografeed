@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         res.render('rooms', {rooms, nickname: req.session.user.nickname})
       })
   } else {
-    res.render('index')
+    res.render('login')
   }
 })
 
@@ -34,10 +34,10 @@ router.post('/', async (req, res, next) => {
   } catch (err) {
     switch (err.code) {
       case '00':
-        res.render('index', {err: 'true', errmsg: '닉네임이 존재하지 않습니다!'})
+        res.render('login', {err: 'true', errmsg: '닉네임이 존재하지 않습니다!'})
         break
       case '01':
-        res.render('index', {err: 'true', errmsg: '비밀번호가 일치하지 않습니다!'})
+        res.render('login', {err: 'true', errmsg: '비밀번호가 일치하지 않습니다!'})
         break
       default:
         res.render('error', {
