@@ -96,8 +96,7 @@ html
         socket.on("s2c chat", function(data) {
           var reg = /별풍[0-9]*개를 쏘았습니다!/;
           if (reg.test(data.body)) {
-            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></div>");
-            $("#messages").append("<div><img src='/mini.png'></div>"); 
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></br><img src='/mini.png'></div>");
           }
           else {
             $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
