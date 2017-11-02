@@ -1,5 +1,5 @@
 {
   "dev" : {
-    "mongo": "mongodb://localhost/mongodb_tutorial"
+    "mongo": "mongodb://localhost:27017"
   }
 }
