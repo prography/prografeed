@@ -48,27 +48,27 @@ class User {
     })
   }
 
-  static confirmLogin (nickname, password) {
+  static async confirmLogin (nickname, password) {
     return new Promise((resolve, reject) => {
       this.find({
         nickname
       }).exec((err, person) => {
         if (err) {
-          reject(new Error({
-            code: '03'
-          }))
+          let error = new Error('디비 조회 오류')
+          error.code = '03'
+          reject(error)
         }
         if (person.length === 0) {
-          reject(new Error({
-            code: '00' // 이름 없음
-          }))
+          let error = new Error('닉네임 없음')
+          error.code = '00'
+          reject(error)
         } else {
           if (person[0].password === password) {
             resolve(person[0])
           } else {
-            reject(new Error({
-              code: '01' // 비밀번호 틀림
-            }))
+            let error = new Error('비밀번호 틀림')
+            error.code = '01'
+            reject(error)
           }
         }
       })
