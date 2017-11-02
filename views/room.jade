@@ -7,28 +7,58 @@ html
   body
     .container
       h3 PrograFeedback
-      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='70%', height='600px', frameborder='0')
-      #messages
-      #footer
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='72%', height='600px', frameborder='0')
+      #side
+        #messages
         form.form-inline
           .form-group
-            label(for='msgForm') Message: 
-            input#msgForm.form-control(type='text')
+            input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
-
+        img#balloon(src="/balloon.png", width="30px", height="30px")
       style.
         .container { margin: auto; }
         h3 { width: 70vw; height: 5vh; margin-top: 40px;}
-        #footer { position: absolute; bottom: 10px; width: 70vw; height: 10vh; }
         iframe { float: left; }
-        #messages { list-style-type: none; margin: 0; padding: 0; width: 20%; height: 70vh; overflow: auto; float: left;}
+        #side { list-style-type: none; margin: 0; padding: 0; width: 28%; height: 600px; overflow: auto; float: left; position: relative;}
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
-        .form-control { margin: 10px; width: 50wh; }
+        form { position: absolute; bottom: 0 }
+        .form-control { margin: 10px; width: 50px; }
+        #balloon { position: absolute; bottom: 10px; right: 0;}
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script.
       $(function(){
+        function sizeUp() {
+          $('#balloon').width($('#balloon').width() + 1);
+          $('#balloon').height($('#balloon').height() + 1);
+        }
+        var sizeUpId;
+        $('#balloon').mousedown(function() {
+          event.preventDefault();
+          sizeUpId = setInterval(sizeUp, 10);
+        }).mouseup(function() {
+            clearInterval(sizeUpId);
+            $("form").append("<img src='/boom.png' id='boom' style='position: absolute; bottom: 10px; right: 0;'>");
+            var boom = $("form").find("#boom");
+            boom.width($('#balloon').width() + 1);
+            boom.height($('#balloon').height() + 1);
+            $('#balloon').width("30px");
+            $('#balloon').height("30px");
+            $('#balloon').fadeOut(10);
+            
+            socket.emit("chat", { msg: "(balloon:" + Math.ceil(Math.pow(3, boom.width()/30)) + ")"});
+ 
+            $.when(boom.fadeOut(500))
+                        .done(function() {
+               boom.remove();
+               $('#balloon').fadeIn(10);
+            });
+            
+        }).click(function() {
+            sizeUp();
+        });
+        
         //$.each(!{conversations}, function(key, val) {
         //  var conversation = JSON.parse(JSON.stringify(val))
         //  $.each(conversation, function(key, val) {
