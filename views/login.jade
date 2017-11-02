@@ -14,7 +14,7 @@ html
             .form-group.log-status
                 input.form-control#Passwod(type="password" placeholder="비밀번호" name='pwd')
                 i.fa.fa-lock
-            if err
+            if errmsg
                 span.alert=errmsg
             a.link(href="/register") 회원가입
             button.log-btn(type="submit") 로그인
