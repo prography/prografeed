@@ -17,6 +17,10 @@ router.get('/', async (req, res) => {
     res.render('login')
   }
 })
+router.get('/logout', async (req, res) => {
+  req.session.user = null
+  res.render('login')
+})
 
 router.post('/', async (req, res, next) => {
   const {nickname, pwd} = req.body
