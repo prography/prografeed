@@ -7,7 +7,6 @@ const bodyParser = require('body-parser')
 const cookieSession = require('cookie-session')
 
 const routes = require('./routes/index')
-const users = require('./routes/users')
 const room = require('./routes/room')
 const register = require('./routes/register')
 
@@ -43,7 +42,6 @@ app.set('ipaddr', '172.31.9.130')
 app.set('port', 3000)
 
 app.use('/', routes)
-app.use('/users', users)
 app.use('/room', room)
 app.use('/register', register)
 
