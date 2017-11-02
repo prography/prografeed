@@ -29,6 +29,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(__dirname, '../uploaded')))
 const session = cookieSession({
   name: 'session',
   keys: ['hello', 'world'],
