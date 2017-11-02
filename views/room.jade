@@ -48,7 +48,7 @@ html
             $('#balloon').height("30px");
             $('#balloon').fadeOut(10);
             
-            socket.emit("chat", { msg: "(balloon:" + Math.ceil(Math.pow(3, boom.width()/30)) + ")"});
+            socket.emit("chat", { msg: "별풍" + Math.ceil(Math.pow(3, boom.width()/30)) + "개를 쏘았습니다!"});
  
             $.when(boom.fadeOut(500))
                         .done(function() {
@@ -94,7 +94,14 @@ html
 
         // 서버로부터의 메시지가 수신되면
         socket.on("s2c chat", function(data) {
-          $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+          var reg = /별풍[0-9]*개를 쏘았습니다!/;
+          if (reg.test(data.body)) {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></div>");
+            $("#messages").append("<div><img src='/mini.png'></div>"); 
+          }
+          else {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+          }
           $("#messages").scrollTop($("#messages")[0].scrollHeight);
         });
         // Send 버튼이 클릭되면
