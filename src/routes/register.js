@@ -26,7 +26,7 @@ router.post('/', async function (req, res) {
           errmsg = '이미 등록된 닉네임입니다!!'
           break
       }
-      res.render('register', {err: true, errmsg})
+      res.render('register', {err: true, errmsg: errmsg})
     }
   }
 })
