@@ -19,7 +19,7 @@ h1 {
     font-size: 50px;
 }
 
-.login-form {
+.register-form {
     max-width: 500px;
     padding: 40px 30px;
     background: #eee;
@@ -77,7 +77,7 @@ h1 {
     color: #ed1c24;
 }
 
-.log-btn {
+.register-btn {
     background: #65C7D0;
     dispaly: inline-block;
     width: 100%;

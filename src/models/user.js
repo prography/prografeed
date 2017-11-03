@@ -24,7 +24,7 @@ class User {
     }
   }
 
-  static add (username, nickname, password) {
+  static async add (username, nickname, password) {
     return new Promise((resolve, reject) => {
       new this({
         username,
@@ -34,13 +34,19 @@ class User {
         if (err) {
           let details = err.toJSON().errmsg
           if (details.indexOf('username') !== -1) {
-            reject(new Error({
-              code: '00'
-            }))
+            let error = new Error()
+            error.code = '00'
+            reject(error)
+            //reject(new Error({
+            //  code: '00'
+            //}))
           } else if (details.indexOf('nickname') !== -1) {
-            reject(new Error({
-              code: '01'
-            }))
+            let error = new Error()
+            error.code = '01'
+            reject(error)
+            //reject(new Error({
+            //  code: '01'
+            //}))
           }
         }
         resolve(result)

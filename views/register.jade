@@ -1,29 +1,23 @@
 doctype html
 html
-  head
-    meta(charset='UTF-8')
-    title 프로그라피드백 
-    link(rel='stylesheet', href='stylesheets/style.css')
-  body
-    .login
-      .login-triangle
-      h2.login-header REGISTER
-      div.login-container
-        form(action='/register', method='post')
-          p
-            input(type='text', name='name', placeholder='이름')
-          p
-            input(type='text', name='nickname', placeholder='닉네임')
-          p
-            input(type='password', name='pwd', placeholder='비밀번호')
-          p
-            input(type='password', name='pwdchk', placeholder='비밀번호확인')
-          p
-            input(type='submit', value='회원가입')
-    script(src='javascripts/jquery.min.js')
-    script.
-      $(function() {
-      var err = "!{err}";
-      if(err) {alert("!{errmsg}");}
-      });   
-
+	head
+		meta(charset='UTF-8')
+		title 프로그라피드백 
+		link(rel='stylesheet', href='stylesheets/register-page.css')
+		link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+	body
+		form.register-form(action='/register', method='post')
+			img.logo(src='/logo.png')
+			.form-group
+				input.form-control(type='text', name='name', placeholder='이름')
+			.form-group
+				input.form-control(type='text', name='nickname', placeholder='닉네임')
+			.form-group
+				input.form-control(type='password', name='pwd', placeholder='비밀번호')
+			.form-group
+				input.form-control(type='password', name='pwdchk', placeholder='비밀번호확인')
+			if errmsg
+				span.alert=errmsg
+			a.link(href="/") 로그인
+			button.register-btn(type='submit') 회원가입
+		script(src='javascripts/jquery.min.js')
