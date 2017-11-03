@@ -17,7 +17,7 @@ router.get('/:roomId', function (req, res) {
       const room = rooms[0]
       res.render('room', {
         pptname: room.ppt,
-        nickname: room.owner.nickname,
+        nickname: req.session.user.nickname,
         roomId: roomId
       })
     })
