@@ -3,11 +3,9 @@ html
   head
     meta(charset='euc-kr')
     title 프로그라피드백
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
   body
     .container
-      h3 PrograFeedback
-      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='72%', height='600px', frameborder='0')
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', frameborder='0')
       #side
         #messages
         form.form-inline
@@ -16,15 +14,17 @@ html
           button.btn.btn-primary(type='submit') Send
         img#balloon(src="/balloon.png", width="30px", height="30px")
       style.
-        .container { margin: auto; }
+        body { width: 1300px; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; }
+        .container { margin-top: 50px; } 
         h3 { width: 70vw; height: 5vh; margin-top: 40px;}
-        iframe { float: left; }
-        #side { list-style-type: none; margin: 0; padding: 0; width: 28%; height: 600px; position: relative; float: left;}
-        #messages { width: 100%; height: 550px; overflow: auto; }
+        iframe { float: left; width: 1000px; height: 700px; }
+        #side { list-style-type: none; margin: 0; padding: 0; width: 300px; height: 700px; position: relative; float: left;}
+        #messages { width: 100%; height: 650px; overflow: auto; }
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
-        form { position: absolute; bottom: 0 }
-        .form-control { margin: 10px; width: 50px; }
+        form { position: absolute; bottom: 0; }
+        #msgForm{ margin: 10px; width: 100px; }
+        .form-group { display: inline-block; }
         #balloon { position: absolute; bottom: 10px; right: 0;}
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
@@ -48,7 +48,7 @@ html
             $('#balloon').height("30px");
             $('#balloon').fadeOut(10);
             
-            socket.emit("chat", { msg: "별풍" + Math.ceil(Math.pow(3, boom.width()/30)) + "개를 쏘았습니다!"});
+            socket.emit("chat", { msg: "별풍 " + Math.ceil(Math.pow(3, boom.width()/30)) + "개를 쏘았습니다!"});
  
             $.when(boom.fadeOut(500))
                         .done(function() {
@@ -94,13 +94,16 @@ html
 
         // 서버로부터의 메시지가 수신되면
         socket.on("s2c chat", function(data) {
-          var reg = /별풍[0-9]*개를 쏘았습니다!/;
+          var reg = /별풍 [0-9]*개를 쏘았습니다!/;
+          console.log($("#messages")[0].scrollHeight);
           if (reg.test(data.body)) {
             $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></br><img src='/mini.png'></div>");
+            console.log($("#messages")[0].scrollHeight);
           }
           else {
             $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
           }
+          console.log($("#messages")[0].scrollHeight);
           $("#messages").scrollTop($("#messages")[0].scrollHeight);
         });
         // Send 버튼이 클릭되면

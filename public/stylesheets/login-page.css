@@ -57,6 +57,7 @@ h1 {
 .form-control:focus, .form-control:focus + .fa {
     border-color: #10CE88;
     color: #10CE88;
+	outline: none;
 }
 
 .form-group .fa {
