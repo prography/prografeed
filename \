@@ -26,7 +26,7 @@ html
         #header { position: relative; display: block; height: 100px;}
         h3 { position: absolute; left: 0; top: 0; }
         .logout { position: absolute; right: 5px; top: 30px;}
-        table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
+        table { width: 100%; border: solid black 1px; border-radius: 10px; }
         th, td { height: 50px; padding: 10px;}
         th { background-color: #65C7D0; color: #FFFFFF; }
         tr:nth-child(even) {background-color: #f2f2f2; }
