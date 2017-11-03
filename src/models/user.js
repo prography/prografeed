@@ -37,16 +37,10 @@ class User {
             let error = new Error()
             error.code = '00'
             reject(error)
-            //reject(new Error({
-            //  code: '00'
-            //}))
           } else if (details.indexOf('nickname') !== -1) {
             let error = new Error()
             error.code = '01'
             reject(error)
-            //reject(new Error({
-            //  code: '01'
-            //}))
           }
         }
         resolve(result)
