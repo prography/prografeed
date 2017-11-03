@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 })
 router.get('/logout', async (req, res) => {
   req.session.user = null
-  res.render('login')
+  res.redirect('/')
 })
 
 router.post('/', async (req, res, next) => {
