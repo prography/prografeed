@@ -37,13 +37,13 @@ html
         reg_pptx = /pptx/
         reg_pdf = /pdf/
         if (reg_pptx.test("!{pptname}")) {
-          $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://localhost:3000/!{pptname}' frameborder='0'>")
+          $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
           $("iframe").height($("iframe").width()*0.65)
           $("#side").height($("iframe").width()*0.65)
           $("#messages").height($("iframe").width()*0.6)
         }
         if (reg_pdf.test("!{pptname}")) {
-          $(".container").prepend("<embed src='http://52.78.29.105:3000/!{pptname}' type='application/pdf'>")
+          $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
           $("embed").height($("embed").width()*0.65)
           $("#side").height($("embed").width()*0.65)
           $("#messages").height($("embed").width()*0.6)
