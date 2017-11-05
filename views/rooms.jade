@@ -24,7 +24,7 @@ html
             td.created= room.created_at
       #create
         i.fa.fa-plus-circle.fa-2x(onclick='plus()')
-        form.create-form(action='/new/:ppt' method='post' enctype="multipart/form-data")
+        form.create-form(action='/newppt' method='post' enctype="multipart/form-data")
           input#FileUpload(type='file' name='ppt')
           button.btn.create-btn(type="submit") create
         button.btn.cancel-btn(onclick='hide()') cancel

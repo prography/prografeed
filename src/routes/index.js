@@ -3,6 +3,7 @@ let router = express.Router()
 let User = require('../models/user')
 let fileUpload = require('express-fileupload')
 const Room = require('../models/room')
+const path = require('path')
 
 router.use(fileUpload())
 
@@ -56,27 +57,24 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// temp create room
-router.post('/new/:ppt', async (req, res, next) => {
+router.post('/newppt', async (req, res, next) => {
   var ppt = req.files.ppt
   var pptName = req.files.ppt.name
   console.log(pptName)
   var reg = /pptx/
-  if(!reg.test(pptName)) {
+  if (!reg.test(pptName)) {
     console.log('no match')
     Room
       .find()
       .populate('owner', 'nickname')
       .sort({'created_at': 1})
       .exec((err, rooms) => {
-      if (err) console.log(err)
-      res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 pptx 형식이 아닙니다!'})
-    })
-  }
-  else {
-    ppt.mv(__dirname + '/../../public/' + pptName, function(err) {
-      if(err)
-        return res.status(500).send(err);
+        if (err) console.log(err)
+        res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 pptx 형식이 아닙니다!'})
+      })
+  } else {
+    ppt.mv(path.join(__dirname, '/../../public/', pptName), function (err) {
+      if (err) return res.status(500).send(err)
     })
     new Room({
       ppt: pptName,
@@ -84,13 +82,13 @@ router.post('/new/:ppt', async (req, res, next) => {
     }).save((err, result) => {
       if (err) console.log(err)
       Room
-      .find()
-      .populate('owner', 'nickname')
-      .sort({'created_at': 1})
-      .exec((err, rooms) => {
-      if (err) console.log(err)
-      res.render('rooms', {rooms, nickname: req.session.user.nickname})
-      })
+        .find()
+        .populate('owner', 'nickname')
+        .sort({'created_at': 1})
+        .exec((err, rooms) => {
+          if (err) console.log(err)
+          res.render('rooms', {rooms, nickname: req.session.user.nickname})
+        })
     })
   }
 })
