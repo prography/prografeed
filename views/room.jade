@@ -4,9 +4,10 @@ html
     meta(charset='euc-kr')
     meta(name="viewport" content="width=device-width, initial-scale=1, user-scalable=no")
     title 프로그라피드백
+    link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
   body
     .container
-      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', frameborder='0')
+      iframe(src="https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}", frameborder='0')
       #side
         #messages
         form.form-inline
@@ -27,6 +28,7 @@ html
         #msgForm{ margin: 10px; width: 190px; height: 24px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle;  outline: none; }
         .form-group { display: inline-block; }
         #balloon { position: absolute; bottom: 10px; right: 0;}
+        .btn { width: 50px; height: 30px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; vertical-align: middle; }
         .btn { width: 50px; height: 30px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; vertical-align: middle; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')

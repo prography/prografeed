@@ -3,7 +3,8 @@ html
   head
     meta(charset='euc-kr')
     title 프로그라피드백 룸
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
   body
     .container
       #header
@@ -21,18 +22,34 @@ html
             td.pptname= room.ppt
             td.owner= room.owner.nickname
             td.created= room.created_at
+      #create
+        i.fa.fa-plus-circle.fa-2x(onclick='plus()')
+        form.create-form(action='/newppt' method='post' enctype="multipart/form-data")
+          input#FileUpload(type='file' name='ppt')
+          button.btn.create-btn(type="submit") create
+        button.btn.cancel-btn(onclick='hide()') cancel
+      if errmsg
+        script.
+          alert("!{errmsg}")
       style.
         body { margin: 0 auto; margin-top: 40px;}
         #header { position: relative; display: block; height: 100px;}
         h3 { position: absolute; left: 0; top: 0; }
         .logout { position: absolute; right: 5px; top: 30px;}
-        table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
+        table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 30px; }
         th, td { height: 50px; padding: 10px; }
         td { border-bottom: 1px solid #ddd; }
         th { background-color: #65C7D0; color: #FFFFFF; }
         tr:nth-child(even) {background-color: #f2f2f2; }
         .tdrow:hover { background-color: #AED9DA; }
         .pptname { width: 50%; font-weight: bold; }
+        #create { position: relative; height: 100px; }
+        .fa-plus-circle { position: absolute; left: 5px; vertical-align: middle; }
+        form { display: none; }
+        #FileUpload { position: absolute; left: 50px; width: 200px; }
+        .create-btn { position: absolute; left: 300px; top: -5px; vertical-align: middle; }
+        .cancel-btn { position: absolute; left: 350px; top: -5px; vertical-align: middle; display: none; }
+        .btn { width: 50px; height: 35px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; }
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.
@@ -44,3 +61,11 @@ html
         document.body.appendChild(f);
         f.submit();
       }
+      function plus() {
+        $("form").show();
+        $(".cancel-btn").show();
+      }
+      function hide() {
+        $("form").hide();
+        $(".cancel-btn").hide();
+      } 
