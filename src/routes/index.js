@@ -61,7 +61,7 @@ router.post('/newppt', async (req, res, next) => {
   var ppt = req.files.ppt
   var pptName = req.files.ppt.name
   console.log(pptName)
-  var reg = /pptx/
+  var reg = /pptx|pdf/
   if (!reg.test(pptName)) {
     console.log('no match')
     Room
@@ -70,7 +70,7 @@ router.post('/newppt', async (req, res, next) => {
       .sort({'created_at': 1})
       .exec((err, rooms) => {
         if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 pptx 형식이 아닙니다!'})
+        res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 올바른 형식이 아닙니다!'})
       })
   } else {
     ppt.mv(path.join(__dirname, '/../../public/', pptName), function (err) {
