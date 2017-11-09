@@ -1,27 +1,25 @@
 doctype html
 html
   head
-    meta(charset='euc-kr')
+    meta(name='viewport', content='width=device-width, user-scalable-no', charset='UTF-8')
     title 프로그라피드백 룸
-    link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
     link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+    link(rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Lobster')
   body
     .container
       #header
-        h3 PrograFeedback
+        h1 PrograFeedback
         a.logout(href='/logout') logout
       table
         tr.row
           th.number no
           th.pptname ppt
           th.owner owner  
-          th.created created   
         each room, i in rooms
           tr.row.tdrow(onclick='chat(this, "#{room._id}")')
             td.number= i
             td.pptname= room.ppt
             td.owner= room.owner.nickname
-            td.created= room.created_at
       #create
         i.fa.fa-plus-circle.fa-2x(onclick='plus()')
         form.create-form(action='/newppt' method='post' enctype="multipart/form-data")
@@ -32,27 +30,32 @@ html
         script.
           alert("!{errmsg}")
       style.
-        body { margin: 0 auto; margin-top: 40px;}
-        #header { position: relative; display: block; height: 100px;}
-        h3 { position: absolute; left: 0; top: 0; }
-        .logout { position: absolute; right: 5px; top: 30px;}
+        body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 2vh; color: #333; line-height: 1.42857143; margin-top:4vh; }
+        .container { width: 100%; }
+        #header { position: relative; display: block; height: 8vh; width: 100%;}
+        h1 { margin-bottom: 4vh; font-size: 4vh; font-family: 'Lobster', cursive;}
+        .logout { position: absolute; right: 1vh; top: 1vh; font-family: 'Lobster', cursive; }
         table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 30px; }
-        th, td { height: 50px; padding: 10px; }
+        th, td { height: 5vh; padding: 10px; }
         td { border-bottom: 1px solid #ddd; }
         th { background-color: #65C7D0; color: #FFFFFF; }
         tr:nth-child(even) {background-color: #f2f2f2; }
         .tdrow:hover { background-color: #AED9DA; }
-        .pptname { width: 50%; font-weight: bold; }
+        .pptname { width: 70%; font-weight: bold; }
         #create { position: relative; height: 100px; }
         .fa-plus-circle { position: absolute; left: 5px; vertical-align: middle; }
         form { display: none; }
-        #FileUpload { position: absolute; left: 50px; width: 200px; }
-        .create-btn { position: absolute; left: 300px; top: -5px; vertical-align: middle; }
-        .cancel-btn { position: absolute; left: 350px; top: -5px; vertical-align: middle; display: none; }
+        #FileUpload { position: absolute; left: 50px; width: 200px; top: 5px;}
+        .create-btn { position: absolute; left: 300px; vertical-align: middle; }
+        .cancel-btn { position: absolute; left: 350px; vertical-align: middle; display: none; }
         .btn { width: 50px; height: 35px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; }
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.
+      $(function() {
+        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width	
+        if(width<640) $("#create").remove()
+      }) 
       function chat(elem, roomId) {
         var f = document.createElement('form');
         f.action = `/room/${roomId}`;

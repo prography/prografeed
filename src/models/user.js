@@ -12,7 +12,9 @@ let userSchema = new Schema({
   },
   password: String,
   created_at: {type: Date, default: Date.now},
-  isAdmin: {type: Boolean, default: false}
+  isAdmin: {type: Boolean, default: false},
+  balloon: {type: Number, default: 50000},
+  recBalloon: {type: Number, default: 0}
 })
 
 class User {
@@ -22,6 +24,57 @@ class User {
       nickname: this.nickname,
       isAdmin: this.isAdmin
     }
+  }
+
+  static async getPersonObject (nickname) {
+    console.log(nickname)
+    return new Promise((resolve, reject) => {
+      this.find({
+        nickname
+      }).exec((err, person) => {
+        if(err) {
+          let error = new Error('디비 조회 오류')
+          error.code = '01'
+          reject(error)
+        } else {
+          resolve(person[0])
+        }
+      })
+    })
+  }
+
+
+  static async sendBalloon (sender, receiver, balloonNum) {
+    return new Promise((resolve, reject) => {
+      if (sender.balloon < balloonNum) {
+        let error = new Error('별풍 갯수 부족')
+        error.code = '00'
+        reject(error)
+      } 
+      this.update({
+        nickname: sender.nickname
+        }, {$set: {balloon: sender.balloon-balloonNum}
+      }).exec((err, result) => {
+        if(err) {
+          let error = new Error('별풍 전송 에러')
+          error.code = '03'
+          reject(error)
+        } else {
+          this.update({
+            nickname: receiver.nickname
+            }, {$set: {recBalloon: receiver.recBalloon+Number(balloonNum)}
+          }).exec((err, result) => {
+            if(err) {
+              let error = new Error('별풍 전송 에러')
+              error.code = '04'
+              reject(error)
+            } else {
+              resolve(result)
+            }
+          }) 
+        }
+      })
+    })
   }
 
   static async add (username, nickname, password) {

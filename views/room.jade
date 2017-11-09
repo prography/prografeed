@@ -1,11 +1,12 @@
 doctype html
 html
   head
-    meta(charset='euc-kr')
-    meta(name="viewport" content="width=device-width, initial-scale=1, user-scalable=no")
+    meta(name='viewport', content='width=device-width, user-scalable-no', charset='UTF-8')
     title 프로그라피드백
     link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+    link(rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Lobster')
   body
+    h1 PrograFeedback
     .container
       #side
         #messages
@@ -13,40 +14,46 @@ html
           .form-group
             input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
-        img#balloon(src="/balloon.png", width="30px", height="30px")
+        img#balloon(src="/balloon.png")
       style.
-        body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; }
-        .container { margin-top: 50px; }
-        h3 { width: 70vw; height: 5vh; margin-top: 40px;}
-        iframe { float: left; width: 70vw; height: 500px; }
-        embed { float: left; width: 70vw; height: 500px; }
-        #side { list-style-type: none; margin: 0; padding: 0; width: 20vw; height: 500px; position: relative; float: left;}
-        #messages { width: 100%; height: 450px; overflow: auto; }
+        body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; margin-top:4vh; }
+        h1 { margin-bottom: 4vh; font-size: 4vh; font-family: 'Lobster', cursive;}
+        iframe { float: left; width: 70vw; height: 85vh; }
+        embed { float: left; width: 70vw; height: 85vh; }
+        #side { list-style-type: none; margin: 0; padding: 0; width: 20vw; height: 85vh; position: relative; float: left;}
+        #messages { width: 100%; height: 75vh; overflow: auto; }
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
-        form { position: absolute; bottom: 0; }
-        #msgForm{ margin: 10px; width: 190px; height: 24px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle;  outline: none; }
-        .form-group { display: inline-block; }
-        #balloon { position: absolute; bottom: 10px; right: 0;}
-        .btn { width: 50px; height: 30px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; vertical-align: middle; }
-        .btn { width: 50px; height: 30px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; vertical-align: middle; }
+        form { position: absolute; bottom: 0; width: 100%;}
+        #msgForm{ width: 100%; height: 4vh; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle;  outline: none; }
+        .form-group { display: inline-block; width: 70%; margin: 10px;}
+        #balloon { position: absolute; bottom: 10px; right: 0; width: 4.5vh; height: 4.5vh;}
+        .btn { width: 10%; height: 4.5vh; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script.
       $(function(){
         reg_pptx = /pptx/
         reg_pdf = /pdf/
-        if (reg_pptx.test("!{pptname}")) {
-          $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
-          $("iframe").height($("iframe").width()*0.65)
-          $("#side").height($("iframe").width()*0.65)
-          $("#messages").height($("iframe").width()*0.6)
-        }
-        if (reg_pdf.test("!{pptname}")) {
-          $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
-          $("embed").height($("embed").width()*0.65)
-          $("#side").height($("embed").width()*0.65)
-          $("#messages").height($("embed").width()*0.6)
+
+        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width
+
+        if(width > 640) {
+          if (reg_pptx.test("!{pptname}")) {
+            $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
+            $("iframe").height($("iframe").width()*8.9/16)
+            $("#side").height($("iframe").width()*8.9/16)
+            $("#messages").height($("iframe").width()*0.5)
+          }
+          if (reg_pdf.test("!{pptname}")) {
+            $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
+            $("embed").height($("embed").width()*8.9/16)
+            $("#side").height($("embed").width()*8.9/16)
+            $("#messages").height($("embed").width()*0.5)
+          } 
+        } else {
+          $("#side").width("90vw")
+          $("#messages").width("90vw")
         }
         function sizeUp() {
           $('#balloon').width($('#balloon').width() + 1);
@@ -62,11 +69,26 @@ html
             var boom = $("form").find("#boom");
             boom.width($('#balloon').width() + 1);
             boom.height($('#balloon').height() + 1);
-            $('#balloon').width("30px");
-            $('#balloon').height("30px");
+            $('#balloon').width("4.5vh");
+            $('#balloon').height("4.5vh");
             $('#balloon').fadeOut(10);
-            
-            socket.emit("chat", { msg: "별풍 " + Math.ceil(Math.pow(3, boom.width()/30)) + "개를 쏘았습니다!"});
+           
+            var senderNickname = "!{nickname}" 
+            var receiverNickname = "!{owner.nickname}"
+            var balloonNum = Math.ceil(Math.pow(3, boom.width()/30))
+            $.ajax({
+              url: '/sendballoon',
+              dataType: 'json',
+              type: 'POST',
+              data: {'senderNickname': senderNickname, 'receiverNickname': receiverNickname, 'balloonNum': balloonNum}, 
+              success: function(result) {
+                if(result['result'] == true) {
+                  socket.emit("chat", { msg: "별풍 " + balloonNum + "개를 쏘았습니다!"});
+                } else {
+                  alert(result['msg'])
+                }
+              }
+            })
  
             $.when(boom.fadeOut(500))
                         .done(function() {
@@ -78,14 +100,6 @@ html
             sizeUp();
         });
         
-        //$.each(!{conversations}, function(key, val) {
-        //  var conversation = JSON.parse(JSON.stringify(val))
-        //  $.each(conversation, function(key, val) {
-        //    $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
-        //    $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        //  });
-        //});
-      
         // socket.io 서버에 접속한다
         var socket = io();
         // 서버로 자신의 정보를 전송한다.

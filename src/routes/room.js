@@ -45,6 +45,7 @@ router.get('/:roomId', function (req, res) {
       res.render('room', {
         pptname: room.ppt,
         nickname: req.session.user.nickname,
+        owner: room.owner,
         roomId: roomId
       })
     })
