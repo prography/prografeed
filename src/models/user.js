@@ -32,7 +32,7 @@ class User {
       this.find({
         nickname
       }).exec((err, person) => {
-        if(err) {
+        if (err) {
           let error = new Error('디비 조회 오류')
           error.code = '01'
           reject(error)
@@ -43,35 +43,33 @@ class User {
     })
   }
 
-
   static async sendBalloon (sender, receiver, balloonNum) {
     return new Promise((resolve, reject) => {
       if (sender.balloon < balloonNum) {
         let error = new Error('별풍 갯수 부족')
         error.code = '00'
         reject(error)
-      } 
-      this.update({
+      } this.update({
         nickname: sender.nickname
-        }, {$set: {balloon: sender.balloon-balloonNum}
+      }, {$set: {balloon: sender.balloon - balloonNum}
       }).exec((err, result) => {
-        if(err) {
+        if (err) {
           let error = new Error('별풍 전송 에러')
           error.code = '03'
           reject(error)
         } else {
           this.update({
             nickname: receiver.nickname
-            }, {$set: {recBalloon: receiver.recBalloon+Number(balloonNum)}
+          }, {$set: {recBalloon: receiver.recBalloon + Number(balloonNum)}
           }).exec((err, result) => {
-            if(err) {
+            if (err) {
               let error = new Error('별풍 전송 에러')
               error.code = '04'
               reject(error)
             } else {
               resolve(result)
             }
-          }) 
+          })
         }
       })
     })

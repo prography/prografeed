@@ -60,33 +60,20 @@ router.post('/', async (req, res, next) => {
 router.post('/sendballoon', async (req, res, next) => {
   const {senderNickname, receiverNickname, balloonNum} = req.body
   try {
-    sender = await User.getPersonObject(senderNickname)
-    receiver = await User.getPersonObject(receiverNickname)
-    msg = User.sendBalloon(await sender, await receiver, balloonNum)
-	res.send({result:true, msg:await msg})
+    var sender = await User.getPersonObject(senderNickname)
+    var receiver = await User.getPersonObject(receiverNickname)
+    var msg = User.sendBalloon(await sender, await receiver, balloonNum)
+    res.send({result: true, msg: await msg})
   } catch (err) {
     switch (err.code) {
       case '00':
-        res.send({result:false, msg:'별풍이 부족합니다!'})
-        break
-      case '01':
-        res.send({result:false, msg:'오류발생!01'})
-        break
-      case '02':
-        res.send({result:false, msg:'오류발생!02'})
-        break
-      case '03':
-        res.send({result:false, msg:'오류발생!03'})
-        break
-      case '04':
-        res.send({result:false, msg:'오류발생!04'})
+        res.send({result: false, msg: '별풍이 부족합니다!'})
         break
       default:
-        res.send({result:false, msg:'오류가 발생했습니다!'})
+        res.send({result: false, msg: '오류가 발생했습니다!'})
     }
   }
 })
-
 
 router.post('/newppt', async (req, res, next) => {
   var ppt = req.files.ppt
