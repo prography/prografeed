@@ -10,28 +10,60 @@ html
     .container
       #side
         #messages
-        form.form-inline
-          .form-group
-            input#msgForm.form-control(type='text')        
+        form
+          input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
         img#balloon(src="/balloon.png")
       style.
         body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; margin-top:4vh; }
-        h1 { margin-bottom: 4vh; font-size: 4vh; font-family: 'Lobster', cursive;}
-        iframe { float: left; width: 70vw; height: 85vh; }
-        embed { float: left; width: 70vw; height: 85vh; }
-        #side { list-style-type: none; margin: 0; padding: 0; width: 20vw; height: 85vh; position: relative; float: left;}
-        #messages { width: 100%; height: 75vh; overflow: auto; }
+        h1 { font-family: 'Lobster', cursive;}
+        iframe { float: left; width: 70vw; }
+        embed { float: left; width: 70vw; }
+        #side { list-style-type: none; width: 20vw; height: 85vh; position: relative; float: left;}
+        #messages { width: 100%; overflow: auto; }
         #messages div { padding: 5px 10px; }
         #messages div:nth-child(odd) { background: #eee; }
         form { position: absolute; bottom: 0; width: 100%;}
-        #msgForm{ width: 100%; height: 4vh; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle;  outline: none; }
-        .form-group { display: inline-block; width: 70%; margin: 10px;}
-        #balloon { position: absolute; bottom: 10px; right: 0; width: 4.5vh; height: 4.5vh;}
-        .btn { width: 10%; height: 4.5vh; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; }
+        #msgForm{ display: inline-block; height: 30px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle; outline: none; margin-top: 1px; margin-left: 5px;}
+        .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
+        #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px;}
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script.
+      $(window).on('resize', function() {
+        reg_pptx = /pptx/
+        reg_pdf = /pdf/
+
+        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width
+
+        if(width > 640) {
+          if (reg_pptx.test("!{pptname}")) {
+            if($("iframe").length == 0) $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
+            $("iframe").height($("iframe").width()*8.9/16)
+            $("#side").height($("iframe").width()*8.9/16)
+          }
+          if (reg_pdf.test("!{pptname}")) {
+            if($("embed").length == 0) $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
+            $("embed").height($("embed").width()*8.9/16)
+            $("#side").height($("embed").width()*8.9/16)
+          } 
+            $("h1").css("font-size", "40px")
+            $("h1").css("margin-bottom", "30px")
+            $("#side").width("20vw")
+            $("#messages").height($("#side").height()-$("form").height()-10)
+            $("#msgForm").width($("#side").width()-90)
+        } else {
+          $("h1").css("font-size", "20px")
+          $("h1").css("margin-bottom", "10px")
+          $("#side").width("90vw")
+          $("#side").height("80vh")
+          $("#msgForm").width($("#side").width()-90)
+          $("#messages").height($("#side").height()-$("form").height()-10)
+          if($("iframe")) $("iframe").remove()
+          if($("embed")) $("embed").remove()
+        }
+
+      })
       $(function(){
         reg_pptx = /pptx/
         reg_pdf = /pdf/
@@ -43,17 +75,24 @@ html
             $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
             $("iframe").height($("iframe").width()*8.9/16)
             $("#side").height($("iframe").width()*8.9/16)
-            $("#messages").height($("iframe").width()*0.5)
           }
           if (reg_pdf.test("!{pptname}")) {
             $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
             $("embed").height($("embed").width()*8.9/16)
             $("#side").height($("embed").width()*8.9/16)
-            $("#messages").height($("embed").width()*0.5)
           } 
+          $("h1").css("font-size", "40px")
+          $("h1").css("margin-bottom", "30px")
+          $("#side").width("20vw")
+          $("#messages").height($("#side").height()-$("form").height()-10)
+          $("#msgForm").width($("#side").width()-90)
         } else {
+          $("h1").css("font-size", "20px")
+          $("h1").css("margin-bottom", "10px")
           $("#side").width("90vw")
-          $("#messages").width("90vw")
+          $("#side").height("80vh")
+          $("#msgForm").width($("#side").width()-90)
+          $("#messages").height($("#side").height()-$("form").height()-10)
         }
         function sizeUp() {
           $('#balloon').width($('#balloon').width() + 1);
@@ -69,8 +108,8 @@ html
             var boom = $("form").find("#boom");
             boom.width($('#balloon').width() + 1);
             boom.height($('#balloon').height() + 1);
-            $('#balloon').width("4.5vh");
-            $('#balloon').height("4.5vh");
+            $('#balloon').width("30px");
+            $('#balloon').height("30px");
             $('#balloon').fadeOut(10);
            
             var senderNickname = "!{nickname}" 

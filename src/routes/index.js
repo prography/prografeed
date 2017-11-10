@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     Room
       .find()
       .populate('owner', 'nickname')
-      .sort({'created_at': 1})
+      .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
         res.render('rooms', {rooms, nickname: req.session.user.nickname})
@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
       .find()
       .populate('owner', 'nickname')
       .select('owner ppt created_at')
-      .sort({'created_at': 1})
+      .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
         res.render('rooms', {rooms, nickname: req.session.user.nickname})
@@ -85,7 +85,7 @@ router.post('/newppt', async (req, res, next) => {
     Room
       .find()
       .populate('owner', 'nickname')
-      .sort({'created_at': 1})
+      .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
         res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 올바른 형식이 아닙니다!'})
@@ -102,7 +102,7 @@ router.post('/newppt', async (req, res, next) => {
       Room
         .find()
         .populate('owner', 'nickname')
-        .sort({'created_at': 1})
+        .sort({'created_at': -1})
         .exec((err, rooms) => {
           if (err) console.log(err)
           res.render('rooms', {rooms, nickname: req.session.user.nickname})

@@ -17,7 +17,7 @@ html
           th.owner owner  
         each room, i in rooms
           tr.row.tdrow(onclick='chat(this, "#{room._id}")')
-            td.number= i
+            td.number= rooms.length - i
             td.pptname= room.ppt
             td.owner= room.owner.nickname
       #create
@@ -30,13 +30,13 @@ html
         script.
           alert("!{errmsg}")
       style.
-        body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 2vh; color: #333; line-height: 1.42857143; margin-top:4vh; }
+        body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; color: #333; line-height: 1.42857143; margin-top:4vh; }
         .container { width: 100%; }
-        #header { position: relative; display: block; height: 8vh; width: 100%;}
-        h1 { margin-bottom: 4vh; font-size: 4vh; font-family: 'Lobster', cursive;}
-        .logout { position: absolute; right: 1vh; top: 1vh; font-family: 'Lobster', cursive; }
+        #header { position: relative; display: block; width: 100%;}
+        h1 { font-size: 40px; font-family: 'Lobster', cursive;}
+        .logout { position: absolute; right: 2px; bottom: 20px; font-family: 'Lobster', cursive; }
         table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 30px; }
-        th, td { height: 5vh; padding: 10px; }
+        th, td { padding: 10px; }
         td { border-bottom: 1px solid #ddd; }
         th { background-color: #65C7D0; color: #FFFFFF; }
         tr:nth-child(even) {background-color: #f2f2f2; }
@@ -52,9 +52,41 @@ html
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.
+      $(window).on('resize', function() {
+        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width	
+        if (width > 640) {
+          $("#header").css("height", "80px")
+          $("#create").css("display", "block")
+          $("h1").css("font-size", "40px")
+          $("th").css("height", "20px")
+          $("td").css("height", "20px")
+          $("body").css("font-size", "15px")
+        } else {
+          $("#header").css("height", "40px")
+          $("#create").css("display", "none")
+          $("h1").css("font-size", "20px")
+          $("th").css("height", "10px")
+          $("td").css("height", "10px")
+          $("body").css("font-size", "10px")
+        } 
+      })
       $(function() {
         var width = (window.innerWidth > 0) ? window.innerWidth : screen.width	
-        if(width<640) $("#create").remove()
+        if (width > 640) {
+          $("#header").css("height", "80px")
+          $("#create").css("display", "block")
+          $("h1").css("font-size", "40px")
+          $("th").css("height", "20px")
+          $("td").css("height", "20px")
+          $("body").css("font-size", "15px")
+        } else {
+          $("#header").css("height", "40px")
+          $("#create").css("display", "none")
+          $("h1").css("font-size", "20px")
+          $("th").css("height", "10px")
+          $("td").css("height", "10px")
+          $("body").css("font-size", "10px")
+        } 
       }) 
       function chat(elem, roomId) {
         var f = document.createElement('form');
