@@ -13,7 +13,7 @@ html
         form
           input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
-        img#balloon(src="/balloon.png")
+        img#balloon(src="/balloon.png", oncontextmenu="return false")
       style.
         body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; margin-top:4vh; }
         h1 { font-family: 'Lobster', cursive;}
@@ -26,10 +26,15 @@ html
         form { position: absolute; bottom: 0; width: 100%;}
         #msgForm{ display: inline-block; height: 30px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle; outline: none; margin-top: 1px; margin-left: 5px;}
         .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
-        #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px;}
+        #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script.
+      window.oncontextmenu = function(event) {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+      }
       $(window).on('resize', function() {
         reg_pptx = /pptx/
         reg_pdf = /pdf/
