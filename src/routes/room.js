@@ -38,7 +38,7 @@ router.get('/:roomId', function (req, res) {
   Room
     .find({_id: roomId})
     .populate('owner', 'nickname')
-    .select('owner ppt')
+    .select('owner ppt recBalloon')
     .exec((err, rooms) => {
       if (err) console.log(err)
       const room = rooms[0]
@@ -46,6 +46,7 @@ router.get('/:roomId', function (req, res) {
         pptname: room.ppt,
         nickname: req.session.user.nickname,
         owner: room.owner,
+        balloon: room.recBalloon,
         roomId: roomId
       })
     })

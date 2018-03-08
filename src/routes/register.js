@@ -9,7 +9,7 @@ router.get('/', function (req, res) {
 
 router.post('/', async function (req, res) {
   var arr = []
-  for (var key in nameList) arr.push(nameList[key])
+  for (var key in nameList) arr.push(nameList[key]["name"])
   const {name, nickname, pwd, pwdchk} = req.body
   if (pwd !== pwdchk) {
     res.render('register', {err: true, errmsg: '비밀번호를 확인해주세요!'})

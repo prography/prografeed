@@ -7,7 +7,7 @@ const path = require('path')
 
 router.use(fileUpload())
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   if (req.session.user) {
     Room
       .find()
@@ -15,7 +15,20 @@ router.get('/', async (req, res) => {
       .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname})
+        try {
+          if (req.session.roommakeerr != 0) {
+            if (req.session.roommakeerr == 1) {
+              req.session.roommakeerr = 0 
+              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon, errmsg: '파일이 올바른 형식이 아닙니다!'})
+            } else {
+              req.session.roommakeerr = 0 
+              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon, errmsg: '이미 존재하는 파일 이름입니다!'})
+            }
+          } else {
+            res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon})
+          }
+        } catch (err) {
+        }
       })
   } else {
     res.render('login')
@@ -37,7 +50,7 @@ router.post('/', async (req, res, next) => {
       .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname})
+        res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon})
       })
   } catch (err) {
     switch (err.code) {
@@ -57,39 +70,64 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+router.post('/deleteroom', async (req, res, next) => {
+  const {pptName} = req.body
+  try {
+    var msg = await Room.deleteRoomObject(pptName)
+    res.send({result: true, msg: await msg})
+  } catch (err) {
+    switch (err.code) {
+      default:
+        res.send({result: false, msg: '에러가 발생하였습니다!'})
+    }
+  }
+})
+
+
 router.post('/sendballoon', async (req, res, next) => {
-  const {senderNickname, receiverNickname, balloonNum} = req.body
+  const {senderNickname, receiverNickname, balloonNum, pptName} = req.body
   try {
     var sender = await User.getPersonObject(senderNickname)
     var receiver = await User.getPersonObject(receiverNickname)
-    var msg = User.sendBalloon(await sender, await receiver, balloonNum)
-    res.send({result: true, msg: await msg})
+    var room = await Room.getRoomObject(pptName)
+    var recBalloon = await User.sendBalloon(await sender, await receiver, balloonNum)
+    req.session.user.recBalloon = await recBalloon
+    var roomBalloon = Room.sendBalloon(await recBalloon, await room, balloonNum) 
+    res.send({result: true, msg: await recBalloon, roomBalloon: await roomBalloon})
   } catch (err) {
     switch (err.code) {
       case '00':
         res.send({result: false, msg: '별풍이 부족합니다!'})
         break
+      case '05':
+        res.send({result: false, msg: '같은 팀에게는 별풍을 쏠 수 없습니다!'})
+        break
       default:
-        res.send({result: false, msg: '오류가 발생했습니다!'})
+        //res.send({result: false, msg: '에러가 발생하였습니다!'})
+        res.send({result: false, msg: err.message})
     }
   }
 })
 
+router.post('/checkballoon', async (req, res, next) => {
+  const {pptName} = req.body
+  try {
+    var room = await Room.getRoomObject(pptName)
+    var roomBalloon = Room.getRoomBalloon(await room)
+    res.send({result: true, roomBalloon: await roomBalloon})
+  } catch (err) {
+      res.send({result: false, msg: '오류가 발생하였습니다!'})
+  }
+})
+
+
 router.post('/newppt', async (req, res, next) => {
   var ppt = req.files.ppt
   var pptName = req.files.ppt.name
-  console.log(pptName)
   var reg = /pptx|pdf/
   if (!reg.test(pptName)) {
-    console.log('no match')
-    Room
-      .find()
-      .populate('owner', 'nickname')
-      .sort({'created_at': -1})
-      .exec((err, rooms) => {
-        if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname, errmsg: '파일이 올바른 형식이 아닙니다!'})
-      })
+    req.session.roommakeerr = 1
+    res.redirect('/')
   } else {
     ppt.mv(path.join(__dirname, '/../../public/', pptName), function (err) {
       if (err) return res.status(500).send(err)
@@ -98,15 +136,12 @@ router.post('/newppt', async (req, res, next) => {
       ppt: pptName,
       owner: req.session.user._id
     }).save((err, result) => {
-      if (err) console.log(err)
-      Room
-        .find()
-        .populate('owner', 'nickname')
-        .sort({'created_at': -1})
-        .exec((err, rooms) => {
-          if (err) console.log(err)
-          res.render('rooms', {rooms, nickname: req.session.user.nickname})
-        })
+      if (err) {
+        req.session.roommakeerr = 2
+        res.redirect('/')
+      } else {
+        res.redirect('/')
+      }
     })
   }
 })

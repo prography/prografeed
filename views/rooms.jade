@@ -9,6 +9,8 @@ html
     .container
       #header
         h1 PrograFeedback
+        img.balloonImg(src='/balloon.png')
+        a.balloon balloon
         a.logout(href='/logout') logout
       table
         tr.row
@@ -34,6 +36,8 @@ html
         .container { width: 100%; }
         #header { position: relative; display: block; width: 100%;}
         h1 { font-size: 40px; font-family: 'Lobster', cursive;}
+        .balloonImg { position: absolute; right: 50px; bottom: 20px; width: 30px; height: 30px; }
+        .balloon { position: absolute; right: 90px; bottom: 20px; font-family: 'Lobster', cursive; }
         .logout { position: absolute; right: 2px; bottom: 20px; font-family: 'Lobster', cursive; }
         table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 30px; }
         th, td { padding: 10px; }
@@ -53,7 +57,7 @@ html
     script(src='javascripts/jquery.min.js')
     script.
       $(window).on('resize', function() {
-        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width	
+        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width
         if (width > 640) {
           $("#header").css("height", "80px")
           $("#create").css("display", "block")
@@ -87,10 +91,11 @@ html
           $("td").css("height", "10px")
           $("body").css("font-size", "10px")
         } 
-      }) 
+        $(".balloon").text("!{balloon}") 
+      })
       function chat(elem, roomId) {
         var f = document.createElement('form');
-        f.action = `/room/${roomId}`;
+        f.action = 'room/' + roomId;
         f.method = 'GET';
 
         document.body.appendChild(f);

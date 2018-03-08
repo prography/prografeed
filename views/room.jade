@@ -6,7 +6,11 @@ html
     link(rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
     link(rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Lobster')
   body
-    h1 PrograFeedback
+    #header
+      h1 PrograFeedback
+      img.balloonImg(src='/balloon.png')
+      a.roomBalloon balloon
+      a.back(href='/') back
     .container
       #side
         #messages
@@ -14,9 +18,15 @@ html
           input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
         img#balloon(src="/balloon.png", oncontextmenu="return false")
+    i.fa.fa-trash.fa-2x(onclick='deleteRoom()')
+    botton.btn2.btn-primary(type='submit', onclick="javascript:document.location='http://prografeed.com/#{pptname}'") Full
       style.
         body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; margin-top:4vh; }
+        #header { position: relative; display: block; width: 100%; }
         h1 { font-family: 'Lobster', cursive;}
+        .balloonImg { position: absolute; right: 50px; bottom: 20px; width: 30px; height: 30px; }
+        .roomBalloon { position: absolute; right: 90px; bottom: 20px; font-family: 'Lobster', cursive; }
+        .back { position: absolute; right: 2px; bottom: 20px; font-family: 'Lobster', cursive; }
         iframe { float: left; width: 70vw; }
         embed { float: left; width: 70vw; }
         #side { list-style-type: none; width: 20vw; height: 85vh; position: relative; float: left;}
@@ -27,6 +37,8 @@ html
         #msgForm{ display: inline-block; height: 30px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle; outline: none; margin-top: 1px; margin-left: 5px;}
         .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
         #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .fa-trash { margin: 10px; visibility: hidden; }
+        .btn2 { width: 30px; height: 14px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; display: inline-block; margin-bottom: 10px; margin-left: 5px; visibility: hidden; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script.
@@ -51,6 +63,7 @@ html
             if($("embed").length == 0) $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
             $("embed").height($("embed").width()*8.9/16)
             $("#side").height($("embed").width()*8.9/16)
+            $(".btn2").css("visibility", "visible")
           } 
             $("h1").css("font-size", "40px")
             $("h1").css("margin-bottom", "30px")
@@ -70,6 +83,10 @@ html
 
       })
       $(function(){
+        if("!{nickname}" == "!{owner.nickname}") {
+          $(".fa-trash").css({"visibility": "visible"})
+        }
+
         reg_pptx = /pptx/
         reg_pdf = /pdf/
 
@@ -85,6 +102,7 @@ html
             $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
             $("embed").height($("embed").width()*8.9/16)
             $("#side").height($("embed").width()*8.9/16)
+            $(".btn2").css("visibility", "visible")
           } 
           $("h1").css("font-size", "40px")
           $("h1").css("margin-bottom", "30px")
@@ -100,34 +118,36 @@ html
           $("#messages").height($("#side").height()-$("form").height()-10)
         }
         function sizeUp() {
-          $('#balloon').width($('#balloon').width() + 1);
-          $('#balloon').height($('#balloon').height() + 1);
+          $('#balloon').width($('#balloon').width() + 1)
+          $('#balloon').height($('#balloon').height() + 1)
         }
-        var sizeUpId;
+        var sizeUpId
         $('#balloon').mousedown(function() {
-          event.preventDefault();
-          sizeUpId = setInterval(sizeUp, 10);
+          event.preventDefault()
+          sizeUpId = setInterval(sizeUp, 10)
         }).mouseup(function() {
-            clearInterval(sizeUpId);
-            $("form").append("<img src='/boom.png' id='boom' style='position: absolute; bottom: 10px; right: 0;'>");
-            var boom = $("form").find("#boom");
-            boom.width($('#balloon').width() + 1);
-            boom.height($('#balloon').height() + 1);
-            $('#balloon').width("30px");
-            $('#balloon').height("30px");
-            $('#balloon').fadeOut(10);
+            clearInterval(sizeUpId)
+            $("form").append("<img src='/boom.png' id='boom' style='position: absolute; bottom: 10px; right: 0;'>")
+            var boom = $("form").find("#boom")
+            boom.width($('#balloon').width() + 1)
+            boom.height($('#balloon').height() + 1)
+            $('#balloon').width("30px")
+            $('#balloon').height("30px")
+            $('#balloon').fadeOut(10)
            
             var senderNickname = "!{nickname}" 
             var receiverNickname = "!{owner.nickname}"
+            var pptName = "!{pptname}"
             var balloonNum = Math.ceil(Math.pow(3, boom.width()/30))
             $.ajax({
               url: '/sendballoon',
               dataType: 'json',
               type: 'POST',
-              data: {'senderNickname': senderNickname, 'receiverNickname': receiverNickname, 'balloonNum': balloonNum}, 
+              data: {'senderNickname': senderNickname, 'receiverNickname': receiverNickname, 'balloonNum': balloonNum, 'pptName': pptName}, 
               success: function(result) {
                 if(result['result'] == true) {
                   socket.emit("chat", { msg: "별풍 " + balloonNum + "개를 쏘았습니다!"});
+                  $('.roomBalloon').text(result['roomBalloon'])
                 } else {
                   alert(result['msg'])
                 }
@@ -137,58 +157,85 @@ html
             $.when(boom.fadeOut(500))
                         .done(function() {
                boom.remove();
-               $('#balloon').fadeIn(10);
-            });
+               $('#balloon').fadeIn(10)
+            })
             
         }).click(function() {
-            sizeUp();
-        });
-        
-        // socket.io 서버에 접속한다
+            sizeUp()
+        })
+
+
+        $(".roomBalloon").text(!{balloon})
+
         var socket = io();
-        // 서버로 자신의 정보를 전송한다.
         socket.emit("login", {
           name: "!{nickname}",
           room: "!{roomId}"
         });
-        // 서버로부터의 메시지가 수신되면
         socket.on("login", function (data) {
-          $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
+          $("#messages").append("<div><strong>" + data + "</strong> has joined</div>")
         });
 
-        // 기존 채팅 데이터를 수신한다
         socket.emit("receive_prev_chat_data");
         socket.on("receive_prev_chat_data_continue", function (received) {
           received.forEach(function(data) {
-            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>")
           })
-          $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        });
+          $("#messages").scrollTop($("#messages")[0].scrollHeight)
+        })
         socket.on("receive_prev_chat_data_complete", function (data) {
-         console.log('receive_prev_chat_data_complete')
-        });
+          console.log('receive_prev_chat_data_complete')
+        })
 
-        // 서버로부터의 메시지가 수신되면
         socket.on("s2c chat", function(data) {
-          var reg = /별풍 [0-9]*개를 쏘았습니다!/;
-          console.log($("#messages")[0].scrollHeight);
+          var reg = /별풍 [0-9]*개를 쏘았습니다!/
           if (reg.test(data.body)) {
-            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></br><img src='/mini.png'></div>");
-            console.log($("#messages")[0].scrollHeight);
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></br></div>")	
+            var image = document.createElement("img");
+            image.src = "/mini.png"
+            $(image).on('load', function() {
+              $("#messages").find("div").last().append($(this))
+              console.log($("#messages")[0].scrollHeight)
+              $("#messages").scrollTop($("#messages")[0].scrollHeight)
+            })
+            $.ajax({
+              url: '/checkballoon',
+              dataType: 'json',
+              type: 'POST',
+              data: {'pptName': "!{pptname}"}, 
+              success: function(result) {
+                if(result['result'] == true) {
+                  $('.roomBalloon').text(result['roomBalloon'])
+                } else {
+                  alert(result['msg'])
+                }
+              }
+            })
+          } else {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>")
+            $("#messages").scrollTop($("#messages")[0].scrollHeight)
           }
-          else {
-            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
-          }
-          console.log($("#messages")[0].scrollHeight);
-          $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        });
-        // Send 버튼이 클릭되면
+        })
         $("form").submit(function(e) {
-          e.preventDefault();
-          var $msgForm = $("#msgForm");
-        // 서버로 메시지를 전송한다.
-        socket.emit("chat", { msg: $msgForm.val() });
-          $msgForm.val("");
-        });
-      });
+          e.preventDefault()
+          var $msgForm = $("#msgForm")
+          socket.emit("chat", { msg: $msgForm.val() })
+          $msgForm.val("")
+        })
+      })
+      function deleteRoom() {
+        if (confirm("방을 삭제하시겠습니까?") == true) {
+          $.ajax({
+            url: '/deleteroom',
+            dataType: 'json',
+            type: 'POST',
+            data: {'pptName': "!{pptname}"}, 
+            success: function(result) {
+              if(result['result'] == true) {
+                $(location).attr('href', '/')
+              } 
+            }
+          })
 
+        } 
+      }

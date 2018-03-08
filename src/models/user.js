@@ -1,5 +1,6 @@
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
+var nameList = require('../routes/list_config.json')
 
 let userSchema = new Schema({
   username: {
@@ -14,7 +15,8 @@ let userSchema = new Schema({
   created_at: {type: Date, default: Date.now},
   isAdmin: {type: Boolean, default: false},
   balloon: {type: Number, default: 50000},
-  recBalloon: {type: Number, default: 0}
+  recBalloon: {type: Number, default: 0},
+  
 })
 
 class User {
@@ -27,7 +29,6 @@ class User {
   }
 
   static async getPersonObject (nickname) {
-    console.log(nickname)
     return new Promise((resolve, reject) => {
       this.find({
         nickname
@@ -43,13 +44,48 @@ class User {
     })
   }
 
+  static getBalloonNum (nickname) {
+    this.find({
+      nickname
+    }).exec((err, person) => {
+      if (err) {
+      } else {
+        return person[0]['recBalloon']
+      }
+    })
+  }
+
+
   static async sendBalloon (sender, receiver, balloonNum) {
+    var arr = []
+    var senderTeamArr = []
+    var receiverTeamArr = []
+    for (var key in nameList) arr.push(nameList[key]["name"])
+    if (nameList[arr.indexOf(sender.username).toString()]["team"]) {
+      for (var key in nameList[arr.indexOf(sender.username).toString()]["team"]) {
+        senderTeamArr.push(nameList[arr.indexOf(sender.username).toString()]["team"][key])
+      }
+    } if (nameList[arr.indexOf(receiver.username).toString()]["team"]) {
+      for (var key in nameList[arr.indexOf(receiver.username).toString()]["team"]) {
+        receiverTeamArr.push(nameList[arr.indexOf(receiver.username).toString()]["team"][key])
+      }
+    } 
+
+    var sameTeam = false
+    for (var i = 0; i < senderTeamArr.length; i++) {
+      if (receiverTeamArr.indexOf(senderTeamArr[i]) != -1) sameTeam = true
+    }
+
     return new Promise((resolve, reject) => {
       if (sender.balloon < balloonNum) {
         let error = new Error('별풍 갯수 부족')
         error.code = '00'
         reject(error)
-      } this.update({
+      } else if (sameTeam) {
+        let error = new Error('같은 팀에게 별풍 쏠 수 없음')
+        error.code = '05'
+        reject(error)
+      } else {this.update({
         nickname: sender.nickname
       }, {$set: {balloon: sender.balloon - balloonNum}
       }).exec((err, result) => {
@@ -67,11 +103,11 @@ class User {
               error.code = '04'
               reject(error)
             } else {
-              resolve(result)
+              resolve(receiver.recBalloon + Number(balloonNum))
             }
           })
         }
-      })
+      })}
     })
   }
 
@@ -80,7 +116,7 @@ class User {
       new this({
         username,
         nickname,
-        password
+        password,
       }).save((err, result) => {
         if (err) {
           let details = err.toJSON().errmsg
