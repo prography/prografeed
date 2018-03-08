@@ -119,4 +119,8 @@ mongoose.connect(config.dev.mongo, {
   useMongoClient: true
 })
 mongoose.Promise = global.Promise
+
+
+app.locals.moment = require('moment')
+
 module.exports = app

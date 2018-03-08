@@ -15,11 +15,13 @@ html
       table
         tr.row
           th.number no
+          th.createdat created
           th.pptname ppt
           th.owner owner  
         each room, i in rooms
           tr.row.tdrow(onclick='chat(this, "#{room._id}")')
             td.number= rooms.length - i
+            td.createdat= moment(room.created_at).format('MM/DD/YYYY HH:mm')
             td.pptname= room.ppt
             td.owner= room.owner.nickname
       #create
@@ -52,9 +54,10 @@ html
         #FileUpload { position: absolute; left: 50px; width: 200px; top: 5px;}
         .create-btn { position: absolute; left: 300px; vertical-align: middle; }
         .cancel-btn { position: absolute; left: 350px; vertical-align: middle; display: none; }
-        .btn { width: 50px; height: 35px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; }
+        .btn { width: 50px; height: 35px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; }
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
+    script(src='javascripts/moment.min.js')
     script.
       $(window).on('resize', function() {
         var width = (window.innerWidth > 0) ? window.innerWidth : screen.width
@@ -96,7 +99,7 @@ html
       function chat(elem, roomId) {
         var f = document.createElement('form');
         f.action = 'room/' + roomId;
-        f.method = 'GET';
+        f.method = 'POST';
 
         document.body.appendChild(f);
         f.submit();

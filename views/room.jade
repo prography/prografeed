@@ -35,12 +35,13 @@ html
         #messages div:nth-child(odd) { background: #eee; }
         form { position: absolute; bottom: 0; width: 100%;}
         #msgForm{ display: inline-block; height: 30px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle; outline: none; margin-top: 1px; margin-left: 5px;}
-        .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
+        .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
         #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         .fa-trash { margin: 10px; visibility: hidden; }
-        .btn2 { width: 30px; height: 14px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; display: inline-block; margin-bottom: 10px; margin-left: 5px; visibility: hidden; }
+        .btn2 { width: 30px; height: 14px; line-height: 14px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; display: inline-block; margin-bottom: 10px; margin-left: 5px; visibility: hidden; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
+    script(src='/javascripts/IE9_fix_for_imagesLoaded_plugin_issue.js')
     script.
       window.oncontextmenu = function(event) {
         event.preventDefault()
@@ -94,12 +95,12 @@ html
 
         if(width > 640) {
           if (reg_pptx.test("!{pptname}")) {
-            $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
+            if($("iframe").length == 0) $(".container").prepend("<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/!{pptname}' frameborder='0'>")
             $("iframe").height($("iframe").width()*8.9/16)
             $("#side").height($("iframe").width()*8.9/16)
           }
           if (reg_pdf.test("!{pptname}")) {
-            $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
+            if($("embed").length == 0) $(".container").prepend("<embed src='http://prografeed.com/!{pptname}' type='application/pdf'>")
             $("embed").height($("embed").width()*8.9/16)
             $("#side").height($("embed").width()*8.9/16)
             $(".btn2").css("visibility", "visible")

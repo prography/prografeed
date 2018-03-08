@@ -33,7 +33,7 @@ router.post('/create', upload.single('file'), function (req, res, next) {
   })
 })
 
-router.get('/:roomId', function (req, res) {
+router.post('/:roomId', function (req, res) {
   const {roomId} = req.params
   Room
     .find({_id: roomId})
