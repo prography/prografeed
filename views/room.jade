@@ -7,10 +7,10 @@ html
     link(rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Lobster')
   body
     #header
-      h1 PrograFeedback
+      h1 
+        a.headlink(href='/') PrograFeedback
       img.balloonImg(src='/balloon.png')
       a.roomBalloon balloon
-      a.back(href='/') back
     .container
       #side
         #messages
@@ -24,9 +24,9 @@ html
         body { width: 90vw; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; margin-top:4vh; }
         #header { position: relative; display: block; width: 100%; }
         h1 { font-family: 'Lobster', cursive;}
-        .balloonImg { position: absolute; right: 50px; bottom: 20px; width: 30px; height: 30px; }
-        .roomBalloon { position: absolute; right: 90px; bottom: 20px; font-family: 'Lobster', cursive; }
-        .back { position: absolute; right: 2px; bottom: 20px; font-family: 'Lobster', cursive; }
+        .headlink { text-decoration: none; color: inherit; }
+        .balloonImg { position: absolute; right: 2px; bottom: 20px; width: 30px; height: 30px; }
+        .roomBalloon { position: absolute; right: 42px; bottom: 20px; font-family: 'Lobster', cursive; }
         iframe { float: left; width: 70vw; }
         embed { float: left; width: 70vw; }
         #side { list-style-type: none; width: 20vw; height: 85vh; position: relative; float: left;}
@@ -37,8 +37,8 @@ html
         #msgForm{ display: inline-block; height: 30px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle; outline: none; margin-top: 1px; margin-left: 5px;}
         .btn { width: 40px; height: 36px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; position: absolute; right: 35px;}
         #balloon { position: absolute; bottom: 2px; right: 0; width: 30px; height: 30px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        .fa-trash { margin: 10px; visibility: hidden; }
-        .btn2 { width: 30px; height: 14px; line-height: 14px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; display: inline-block; margin-bottom: 10px; margin-left: 5px; visibility: hidden; }
+        .fa-trash { margin: 10px; display: none; }
+        .btn2 { width: 30px; height: 14px; line-height: 14px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; font-family: 'Lobster', cursive; vertical-align: middle; display: inline-block; margin-top: 10px; margin-bottom: 20px; margin-left: 5px; visibility: hidden; }
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/jquery.min.js')
     script(src='/javascripts/IE9_fix_for_imagesLoaded_plugin_issue.js')
@@ -85,7 +85,7 @@ html
       })
       $(function(){
         if("!{nickname}" == "!{owner.nickname}") {
-          $(".fa-trash").css({"visibility": "visible"})
+          $(".fa-trash").css({"display": "inline-block"})
         }
 
         reg_pptx = /pptx/
@@ -148,7 +148,6 @@ html
               success: function(result) {
                 if(result['result'] == true) {
                   socket.emit("chat", { msg: "별풍 " + balloonNum + "개를 쏘았습니다!"});
-                  $('.roomBalloon').text(result['roomBalloon'])
                 } else {
                   alert(result['msg'])
                 }
@@ -166,7 +165,7 @@ html
         })
 
 
-        $(".roomBalloon").text(!{balloon})
+        $(".roomBalloon").text("my: !{myBalloon} / room's: !{balloon}")
 
         var socket = io();
         socket.emit("login", {
@@ -206,7 +205,7 @@ html
               data: {'pptName': "!{pptname}"}, 
               success: function(result) {
                 if(result['result'] == true) {
-                  $('.roomBalloon').text(result['roomBalloon'])
+                  $(".roomBalloon").text("my: " + result['myBalloon'] + " / room's: " + result['roomBalloon'])
                 } else {
                   alert(result['msg'])
                 }
@@ -220,7 +219,8 @@ html
         $("form").submit(function(e) {
           e.preventDefault()
           var $msgForm = $("#msgForm")
-          socket.emit("chat", { msg: $msgForm.val() })
+          if ($msgForm.val() == "") return
+          socket.emit("chat", { msg: $msgForm.val().replace(/</g, "&lt;").replace(/>/g, "&gt;") })
           $msgForm.val("")
         })
       })

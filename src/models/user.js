@@ -103,7 +103,7 @@ class User {
               error.code = '04'
               reject(error)
             } else {
-              resolve(receiver.recBalloon + Number(balloonNum))
+              resolve({remained: sender.balloon - Number(balloonNum), received: receiver.recBalloon + Number(balloonNum)})
             }
           })
         }

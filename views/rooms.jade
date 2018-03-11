@@ -94,12 +94,12 @@ html
           $("td").css("height", "10px")
           $("body").css("font-size", "10px")
         } 
-        $(".balloon").text("!{balloon}") 
+        $(".balloon").text("remained: !{balloon} / received: !{recBalloon}") 
       })
       function chat(elem, roomId) {
         var f = document.createElement('form');
         f.action = 'room/' + roomId;
-        f.method = 'POST';
+        f.method = 'GET';
 
         document.body.appendChild(f);
         f.submit();

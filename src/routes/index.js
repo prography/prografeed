@@ -19,13 +19,13 @@ router.get('/', async (req, res, next) => {
           if (req.session.roommakeerr != 0) {
             if (req.session.roommakeerr == 1) {
               req.session.roommakeerr = 0 
-              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon, errmsg: '파일이 올바른 형식이 아닙니다!'})
+              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.balloon, recBalloon: req.session.user.recBalloon, errmsg: '파일이 올바른 형식이 아닙니다!'})
             } else {
               req.session.roommakeerr = 0 
-              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon, errmsg: '이미 존재하는 파일 이름입니다!'})
+              res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.balloon, recBalloon: req.session.user.recBalloon, errmsg: '이미 존재하는 파일 이름입니다!'})
             }
           } else {
-            res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon})
+            res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.balloon, recBalloon: req.session.user.recBalloon})
           }
         } catch (err) {
         }
@@ -50,7 +50,7 @@ router.post('/', async (req, res, next) => {
       .sort({'created_at': -1})
       .exec((err, rooms) => {
         if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.recBalloon})
+        res.render('rooms', {rooms, nickname: req.session.user.nickname, balloon: req.session.user.balloon, recBalloon: req.session.user.recBalloon})
       })
   } catch (err) {
     switch (err.code) {
@@ -91,7 +91,12 @@ router.post('/sendballoon', async (req, res, next) => {
     var receiver = await User.getPersonObject(receiverNickname)
     var room = await Room.getRoomObject(pptName)
     var recBalloon = await User.sendBalloon(await sender, await receiver, balloonNum)
-    req.session.user.recBalloon = await recBalloon
+    if (receiverNickname == req.session.user.nickname) {
+      req.session.user.recBalloon = await recBalloon.received
+    }
+    if (senderNickname == req.session.user.nickname) {
+      req.session.user.balloon = await recBalloon.remained
+    }
     var roomBalloon = Room.sendBalloon(await recBalloon, await room, balloonNum) 
     res.send({result: true, msg: await recBalloon, roomBalloon: await roomBalloon})
   } catch (err) {
@@ -114,7 +119,7 @@ router.post('/checkballoon', async (req, res, next) => {
   try {
     var room = await Room.getRoomObject(pptName)
     var roomBalloon = Room.getRoomBalloon(await room)
-    res.send({result: true, roomBalloon: await roomBalloon})
+    res.send({result: true, myBalloon: req.session.user.balloon, roomBalloon: await roomBalloon})
   } catch (err) {
       res.send({result: false, msg: '오류가 발생하였습니다!'})
   }

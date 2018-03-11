@@ -33,23 +33,28 @@ router.post('/create', upload.single('file'), function (req, res, next) {
   })
 })
 
-router.post('/:roomId', function (req, res) {
-  const {roomId} = req.params
-  Room
-    .find({_id: roomId})
-    .populate('owner', 'nickname')
-    .select('owner ppt recBalloon')
-    .exec((err, rooms) => {
-      if (err) console.log(err)
-      const room = rooms[0]
-      res.render('room', {
-        pptname: room.ppt,
-        nickname: req.session.user.nickname,
-        owner: room.owner,
-        balloon: room.recBalloon,
-        roomId: roomId
+router.get('/:roomId', function (req, res) {
+  if (req.session.user) {
+    const {roomId} = req.params
+    Room
+      .find({_id: roomId})
+      .populate('owner', 'nickname')
+      .select('owner ppt recBalloon')
+      .exec((err, rooms) => {
+        if (err) console.log(err)
+        const room = rooms[0]
+        res.render('room', {
+          pptname: room.ppt,
+          nickname: req.session.user.nickname,
+          owner: room.owner,
+          myBalloon: req.session.user.balloon,
+          balloon: room.recBalloon,
+          roomId: roomId
+        })
       })
-    })
+  } else {
+    res.redirect('/')
+  }
 })
 
 module.exports = router
