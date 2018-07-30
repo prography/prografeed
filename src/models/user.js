@@ -1,6 +1,5 @@
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
-var nameList = require('../routes/list_config.json')
 
 let userSchema = new Schema({
   username: {
@@ -12,107 +11,18 @@ let userSchema = new Schema({
     unique: true
   },
   password: String,
-  created_at: {type: Date, default: Date.now},
-  isAdmin: {type: Boolean, default: false},
-  balloon: {type: Number, default: 50000},
-  recBalloon: {type: Number, default: 0},
-  
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 class User {
   getUserInfo () {
     return {
       username: this.username,
-      nickname: this.nickname,
-      isAdmin: this.isAdmin
+      nickname: this.nickname
     }
-  }
-
-  static async getPersonObject (nickname) {
-    return new Promise((resolve, reject) => {
-      this.find({
-        nickname
-      }).exec((err, person) => {
-        if (err) {
-          let error = new Error('디비 조회 오류')
-          error.code = '01'
-          reject(error)
-        } else {
-          resolve(person[0])
-        }
-      })
-    })
-  }
-
-  static getBalloonNum (nickname) {
-    this.find({
-      nickname
-    }).exec((err, person) => {
-      if (err) {
-      } else {
-        return person[0]['recBalloon']
-      }
-    })
-  }
-
-
-  static async sendBalloon (sender, receiver, balloonNum) {
-    var arr = []
-    var senderTeamArr = []
-    var receiverTeamArr = []
-    for (var key in nameList) arr.push(nameList[key]["name"])
-    if (nameList[arr.indexOf(sender.username).toString()]["team"]) {
-      for (var key in nameList[arr.indexOf(sender.username).toString()]["team"]) {
-        senderTeamArr.push(nameList[arr.indexOf(sender.username).toString()]["team"][key])
-      }
-    } if (nameList[arr.indexOf(receiver.username).toString()]["team"]) {
-      for (var key in nameList[arr.indexOf(receiver.username).toString()]["team"]) {
-        receiverTeamArr.push(nameList[arr.indexOf(receiver.username).toString()]["team"][key])
-      }
-    } 
-
-    var sameTeam = false
-    for (var i = 0; i < senderTeamArr.length; i++) {
-      if (receiverTeamArr.indexOf(senderTeamArr[i]) != -1) sameTeam = true
-    }
-
-    return new Promise((resolve, reject) => {
-      if (sender.balloon < balloonNum) {
-        let error = new Error('별풍 갯수 부족')
-        error.code = '00'
-        reject(error)
-      } else if (sameTeam) {
-        let error = new Error('같은 팀에게 별풍 쏠 수 없음')
-        error.code = '05'
-        reject(error)
-      } else if (sender.balloon < 0) {
-        let error = new Error('별풍은 양수개로 쏴주셔야 됩니다!')
-        error.code = '06'
-        reject(error)
-      } else {this.update({
-        nickname: sender.nickname
-      }, {$set: {balloon: sender.balloon - balloonNum}
-      }).exec((err, result) => {
-        if (err) {
-          let error = new Error('별풍 전송 에러')
-          error.code = '03'
-          reject(error)
-        } else {
-          this.update({
-            nickname: receiver.nickname
-          }, {$set: {recBalloon: receiver.recBalloon + Number(balloonNum)}
-          }).exec((err, result) => {
-            if (err) {
-              let error = new Error('별풍 전송 에러')
-              error.code = '04'
-              reject(error)
-            } else {
-              resolve({remained: sender.balloon - Number(balloonNum), received: receiver.recBalloon + Number(balloonNum)})
-            }
-          })
-        }
-      })}
-    })
   }
 
   static async add (username, nickname, password) {
@@ -120,7 +30,7 @@ class User {
       new this({
         username,
         nickname,
-        password,
+        password
       }).save((err, result) => {
         if (err) {
           let details = err.toJSON().errmsg
@@ -146,7 +56,7 @@ class User {
       }).exec((err, person) => {
         if (err) {
           let error = new Error('디비 조회 오류')
-          error.code = '03'
+          error.code = '02'
           reject(error)
         }
         if (person.length === 0) {

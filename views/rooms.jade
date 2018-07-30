@@ -9,8 +9,6 @@ html
     .container
       #header
         h1 PrograFeedback
-        img.balloonImg(src='/balloon.png')
-        a.balloon balloon
         a.logout(href='/logout') logout
       table
         tr.row
@@ -19,14 +17,14 @@ html
           th.pptname ppt
           th.owner owner  
         each room, i in rooms
-          tr.row.tdrow(onclick='chat(this, "#{room._id}")')
+          tr.row.tdrow(onclick='enter(this, "#{room._id}")')
             td.number= rooms.length - i
             td.createdat= moment(room.created_at).format('MM/DD/YYYY HH:mm')
             td.pptname= room.ppt
             td.owner= room.owner.nickname
       #create
         i.fa.fa-plus-circle.fa-2x(onclick='plus()')
-        form.create-form(action='/newppt' method='post' enctype="multipart/form-data")
+        form.create-form(action='/' method='post' enctype="multipart/form-data")
           input#FileUpload(type='file' name='ppt')
           button.btn.create-btn(type="submit") create
         button.btn.cancel-btn(onclick='hide()') cancel
@@ -38,8 +36,6 @@ html
         .container { width: 100%; }
         #header { position: relative; display: block; width: 100%;}
         h1 { font-size: 40px; font-family: 'Lobster', cursive;}
-        .balloonImg { position: absolute; right: 50px; bottom: 20px; width: 30px; height: 30px; }
-        .balloon { position: absolute; right: 90px; bottom: 20px; font-family: 'Lobster', cursive; }
         .logout { position: absolute; right: 2px; bottom: 20px; font-family: 'Lobster', cursive; }
         table { width: 100%; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 30px; }
         th, td { padding: 10px; }
@@ -55,9 +51,7 @@ html
         .create-btn { position: absolute; left: 300px; vertical-align: middle; }
         .cancel-btn { position: absolute; left: 350px; vertical-align: middle; display: none; }
         .btn { width: 50px; height: 35px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-size: 8px; }
-    script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
-    script(src='javascripts/moment.min.js')
     script.
       $(window).on('resize', function() {
         var width = (window.innerWidth > 0) ? window.innerWidth : screen.width
@@ -94,16 +88,7 @@ html
           $("td").css("height", "10px")
           $("body").css("font-size", "10px")
         } 
-        $(".balloon").text("remained: !{balloon} / received: !{recBalloon}") 
       })
-      function chat(elem, roomId) {
-        var f = document.createElement('form');
-        f.action = 'room/' + roomId;
-        f.method = 'GET';
-
-        document.body.appendChild(f);
-        f.submit();
-      }
       function plus() {
         $("form").show();
         $(".cancel-btn").show();
@@ -111,4 +96,11 @@ html
       function hide() {
         $("form").hide();
         $(".cancel-btn").hide();
-      } 
+      }
+      function enter(elem, roomId) {
+        var f = document.createElement('form');
+        f.action = 'room/' + roomId;
+        f.method = 'GET';
+        document.body.appendChild(f);
+        f.submit();
+      }
