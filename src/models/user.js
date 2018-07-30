@@ -85,6 +85,10 @@ class User {
         let error = new Error('같은 팀에게 별풍 쏠 수 없음')
         error.code = '05'
         reject(error)
+      } else if (sender.balloon < 0) {
+        let error = new Error('별풍은 양수개로 쏴주셔야 됩니다!')
+        error.code = '06'
+        reject(error)
       } else {this.update({
         nickname: sender.nickname
       }, {$set: {balloon: sender.balloon - balloonNum}

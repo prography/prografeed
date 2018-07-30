@@ -107,6 +107,9 @@ router.post('/sendballoon', async (req, res, next) => {
       case '05':
         res.send({result: false, msg: '같은 팀에게는 별풍을 쏠 수 없습니다!'})
         break
+      case '06':
+        res.send({result: false, msg: '별풍은 양수개로 쏴주셔야 됩니다!'})
+        break
       default:
         //res.send({result: false, msg: '에러가 발생하였습니다!'})
         res.send({result: false, msg: err.message})
